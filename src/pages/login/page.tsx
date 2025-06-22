@@ -28,8 +28,10 @@ interface LoginFormData {
 }
 
 interface User {
+    id: number;
     username: string;
     role: "employee" | "supervisor";
+    token: string;
 }
 
 const LoginPage = () => {
@@ -50,30 +52,39 @@ const LoginPage = () => {
         },
     });
 
-    // Fake authentication function
+    // Authentication function that makes POST request to backend
     const authenticateUser = async (
         username: string,
         password: string
     ): Promise<User | null> => {
-        // Simulate API call delay
-        await new Promise((resolve) => setTimeout(resolve, 1000));
+        console.log({ username, password });
+        try {
+            const response = await fetch("http://localhost:3000/login", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    username,
+                    password,
+                }),
+            });
 
-        // Fake user database
-        const users: User[] = [
-            { username: "employee1", role: "employee" },
-            { username: "employee2", role: "employee" },
-            { username: "supervisor1", role: "supervisor" },
-            { username: "supervisor2", role: "supervisor" },
-        ];
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
 
-        // Simple authentication logic
-        const user = users.find((u) => u.username === username);
+            const data = await response.json();
+            console.log({ data });
+            if (data) {
+                return data;
+            }
 
-        if (user && password === "password123") {
-            return user;
+            return null;
+        } catch (error) {
+            console.error("Login error:", error);
+            throw error;
         }
-
-        return null;
     };
 
     const onSubmit = async (data: LoginFormData) => {
@@ -82,7 +93,7 @@ const LoginPage = () => {
 
         try {
             const user = await authenticateUser(data.username, data.password);
-
+            console.log({ user });
             if (user) {
                 // Store user info in localStorage (in a real app, you'd use a more secure method)
                 localStorage.setItem("user", JSON.stringify(user));
