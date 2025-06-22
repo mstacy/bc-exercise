@@ -294,15 +294,30 @@ const LoginPage = () => {
                             variant="outlined"
                             sx={{ p: 2, bgcolor: "grey.50" }}
                         >
-                            <Typography
-                                variant="body2"
-                                color="text.secondary"
-                                gutterBottom
+                            <Box
+                                sx={{
+                                    display: "flex",
+                                    gap: 1,
+                                }}
                             >
-                                <strong>Employee:</strong> alice / password123
-                                <br />
-                                <strong>Employee:</strong> bob / password123
-                            </Typography>
+                                <Typography
+                                    variant="body2"
+                                    color="text.secondary"
+                                    gutterBottom
+                                >
+                                    <strong>Employees:</strong>
+                                </Typography>
+
+                                <Typography
+                                    variant="body2"
+                                    color="text.secondary"
+                                    gutterBottom
+                                >
+                                    alice / password123
+                                    <br />
+                                    bob / password123
+                                </Typography>
+                            </Box>
                             <Typography variant="body2" color="text.secondary">
                                 <strong>Supervisor:</strong> carol / adminpass
                             </Typography>
