@@ -16,12 +16,14 @@ export interface User {
 interface UserContextType {
     user: User | null;
     setUser: (user: User | null) => void;
+    loading: boolean;
 }
 
 const UserContext = createContext<UserContextType | undefined>(undefined);
 
 export const UserProvider = ({ children }: { children: ReactNode }) => {
     const [user, setUserState] = useState<User | null>(null);
+    const [loading, setLoading] = useState(true);
 
     // Load user from localStorage on mount
     useEffect(() => {
@@ -34,6 +36,7 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
                 setUserState(null);
             }
         }
+        setLoading(false);
     }, []);
 
     // Sync setUser with localStorage
@@ -47,7 +50,7 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
     };
 
     return (
-        <UserContext.Provider value={{ user, setUser }}>
+        <UserContext.Provider value={{ user, setUser, loading }}>
             {children}
         </UserContext.Provider>
     );

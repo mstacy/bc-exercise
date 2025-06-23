@@ -21,7 +21,7 @@ import {
     VisibilityOff,
 } from "@mui/icons-material";
 import { IconButton, InputAdornment } from "@mui/material";
-import { useUser } from "../../context/UserContext";
+import { useUser } from "../../auth/UserContext";
 
 interface LoginFormData {
     username: string;
@@ -35,7 +35,7 @@ interface User {
     token: string;
 }
 
-const LoginForm = () => {
+const LoginPage = () => {
     const navigate = useNavigate();
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState("");
@@ -348,7 +348,5 @@ const LoginForm = () => {
         </Container>
     );
 };
-
-const LoginPage = LoginForm;
 
 export default LoginPage;

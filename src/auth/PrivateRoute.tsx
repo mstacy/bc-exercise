@@ -1,6 +1,7 @@
 import { ReactNode } from "react";
 import { Navigate } from "react-router-dom";
 import { useUser } from "./UserContext";
+import { CircularProgress, Box } from "@mui/material";
 
 interface PrivateRouteProps {
     children: ReactNode;
@@ -8,8 +9,20 @@ interface PrivateRouteProps {
 }
 
 const PrivateRoute = ({ children, requiredRole }: PrivateRouteProps) => {
-    const { user } = useUser();
-    console.log({ user });
+    const { user, loading } = useUser();
+
+    if (loading) {
+        return (
+            <Box
+                display="flex"
+                justifyContent="center"
+                alignItems="center"
+                minHeight="100vh"
+            >
+                <CircularProgress />
+            </Box>
+        );
+    }
 
     if (!user) {
         // Not logged in
