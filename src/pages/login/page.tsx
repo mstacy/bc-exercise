@@ -173,6 +173,7 @@ const LoginPage = () => {
                                 component="h1"
                                 variant="h4"
                                 fontWeight="bold"
+                                data-testid="login-title"
                             >
                                 Sign In
                             </Typography>
