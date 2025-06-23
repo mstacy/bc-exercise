@@ -37,18 +37,21 @@ const SupervisorPage = () => {
 
     // Filtering
     const filteredRequests = useMemo(() => {
-        return requests.filter((r) => {
-            if (filters.employeeName && r.employeeName !== filters.employeeName)
+        return requests.filter((req) => {
+            if (
+                filters.employeeName &&
+                req.employeeName !== filters.employeeName
+            )
                 return false;
-            if (filters.status && r.status !== filters.status) return false;
+            if (filters.status && req.status !== filters.status) return false;
             if (
                 filters.minBudget &&
-                r.estimatedBudget < Number(filters.minBudget)
+                req.estimatedBudget < Number(filters.minBudget)
             )
                 return false;
             if (
                 filters.maxBudget &&
-                r.estimatedBudget > Number(filters.maxBudget)
+                req.estimatedBudget > Number(filters.maxBudget)
             )
                 return false;
             return true;

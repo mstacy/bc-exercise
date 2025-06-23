@@ -115,7 +115,7 @@ const EmployeePage = () => {
                         mb={2}
                         data-testid="page-title"
                     >
-                        Certification Request TEST
+                        Certification Request
                     </Typography>
                     <form
                         onSubmit={handleSubmit(onSubmit)}

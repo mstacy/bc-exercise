@@ -1,14 +1,10 @@
 import { AppBar, Toolbar, Typography, Button, Box } from "@mui/material";
 import { useUser } from "../auth/UserContext";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 const Header = () => {
     const { user, setUser } = useUser();
     const navigate = useNavigate();
-    const location = useLocation();
-
-    // Hide header on login page
-    if (location.pathname === "/login") return null;
 
     const handleLogout = () => {
         setUser(null);

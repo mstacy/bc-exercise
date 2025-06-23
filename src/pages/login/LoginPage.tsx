@@ -105,7 +105,7 @@ const LoginPage = () => {
 
         try {
             const user = await authenticateUser(data.username, data.password);
-            console.log({ user });
+
             if (user) {
                 setUser(user);
                 if (user.role === "employee") {
