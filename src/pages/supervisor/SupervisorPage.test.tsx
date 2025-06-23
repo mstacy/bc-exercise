@@ -221,11 +221,11 @@ describe("SupervisorPage", () => {
             );
 
             await waitFor(() => {
-                expect(screen.getByTestId("status-1")).toHaveTextContent(
-                    "Submitted for Approval"
+                expect(screen.getByTestId("status-select-1")).toHaveValue(
+                    "submitted"
                 );
-                expect(screen.getByTestId("status-2")).toHaveTextContent(
-                    "Approved"
+                expect(screen.getByTestId("status-select-2")).toHaveValue(
+                    "approved"
                 );
             });
 
@@ -234,9 +234,11 @@ describe("SupervisorPage", () => {
             await user.click(screen.getByTestId("status-option-approved"));
 
             await waitFor(() => {
-                expect(screen.getByTestId("status-2")).toBeInTheDocument();
                 expect(
-                    screen.queryByTestId("status-1")
+                    screen.getByTestId("status-select-2")
+                ).toBeInTheDocument();
+                expect(
+                    screen.queryByTestId("status-select-1")
                 ).not.toBeInTheDocument();
             });
         });
@@ -290,12 +292,10 @@ describe("SupervisorPage", () => {
             );
 
             await waitFor(() => {
-                expect(
-                    screen.getByTestId("budget-sort-submitted")
-                ).toBeInTheDocument();
+                expect(screen.getByTestId("budget-sort")).toBeInTheDocument();
             });
 
-            const budgetHeader = screen.getByTestId("budget-sort-submitted");
+            const budgetHeader = screen.getByTestId("budget-sort");
             await user.click(budgetHeader);
 
             expect(budgetHeader).toBeInTheDocument();
@@ -315,12 +315,10 @@ describe("SupervisorPage", () => {
             );
 
             await waitFor(() => {
-                expect(
-                    screen.getByTestId("date-sort-submitted")
-                ).toBeInTheDocument();
+                expect(screen.getByTestId("date-sort")).toBeInTheDocument();
             });
 
-            const dateHeader = screen.getByTestId("date-sort-submitted");
+            const dateHeader = screen.getByTestId("date-sort");
             await user.click(dateHeader);
 
             expect(dateHeader).toBeInTheDocument();
@@ -347,8 +345,8 @@ describe("SupervisorPage", () => {
             );
 
             await waitFor(() => {
-                expect(screen.getByTestId("status-1")).toHaveTextContent(
-                    "Submitted for Approval"
+                expect(screen.getByTestId("status-select-1")).toHaveValue(
+                    "submitted"
                 );
             });
 
@@ -389,8 +387,8 @@ describe("SupervisorPage", () => {
             );
 
             await waitFor(() => {
-                expect(screen.getByTestId("status-1")).toHaveTextContent(
-                    "Submitted for Approval"
+                expect(screen.getByTestId("status-select-1")).toHaveValue(
+                    "submitted"
                 );
             });
 
@@ -438,22 +436,11 @@ describe("SupervisorPage", () => {
             });
         });
 
-        it("should show empty state for groups with no requests", async () => {
-            const emptyRequests = [
-                {
-                    id: 1,
-                    employeeId: 1,
-                    employeeName: "alice",
-                    description: "AWS Certification",
-                    estimatedBudget: 500,
-                    expectedDate: "2024-01-15",
-                    status: "submitted" as const,
-                },
-            ];
-
+        it("should show empty state when filters result in no matches", async () => {
+            // Test with empty requests array
             (fetch as jest.Mock).mockResolvedValueOnce({
                 ok: true,
-                json: async () => emptyRequests,
+                json: async () => [],
             });
 
             render(
@@ -464,15 +451,13 @@ describe("SupervisorPage", () => {
 
             await waitFor(() => {
                 expect(
-                    screen.getByTestId("empty-group-draft")
-                ).toBeInTheDocument();
-                expect(
-                    screen.getByTestId("empty-group-approved")
-                ).toBeInTheDocument();
-                expect(
-                    screen.getByTestId("empty-group-rejected")
+                    screen.getByTestId("no-requests-found")
                 ).toBeInTheDocument();
             });
+
+            expect(
+                screen.getByText("No requests found matching your filters")
+            ).toBeInTheDocument();
         });
 
         it("should display table headers correctly", async () => {
@@ -488,24 +473,21 @@ describe("SupervisorPage", () => {
             );
 
             await waitFor(() => {
+                expect(screen.getByTestId("employee-header")).toHaveTextContent(
+                    "Employee"
+                );
                 expect(
-                    screen.getByTestId("employee-header-submitted")
-                ).toHaveTextContent("Employee");
-                expect(
-                    screen.getByTestId("description-header-submitted")
+                    screen.getByTestId("description-header")
                 ).toHaveTextContent("Description");
+                expect(screen.getByTestId("budget-sort")).toHaveTextContent(
+                    "Budget"
+                );
+                expect(screen.getByTestId("date-sort")).toHaveTextContent(
+                    "Expected Date"
+                );
                 expect(
-                    screen.getByTestId("budget-sort-submitted")
-                ).toHaveTextContent("Budget");
-                expect(
-                    screen.getByTestId("date-sort-submitted")
-                ).toHaveTextContent("Expected Date");
-                expect(
-                    screen.getByTestId("status-header-submitted")
+                    screen.getByTestId("update-status-header")
                 ).toHaveTextContent("Status");
-                expect(
-                    screen.getByTestId("update-status-header-submitted")
-                ).toHaveTextContent("Update Status");
             });
         });
     });
@@ -570,9 +552,7 @@ describe("SupervisorPage", () => {
             );
 
             await waitFor(() => {
-                expect(
-                    screen.getByTestId("table-submitted")
-                ).toBeInTheDocument();
+                expect(screen.getByTestId("table")).toBeInTheDocument();
                 expect(screen.getAllByRole("row").length).toBeGreaterThan(0);
             });
         });

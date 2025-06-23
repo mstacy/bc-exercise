@@ -1,4 +1,11 @@
-import { Box, TextField, MenuItem, Stack, InputAdornment } from "@mui/material";
+import {
+    Box,
+    TextField,
+    MenuItem,
+    Stack,
+    InputAdornment,
+    Alert,
+} from "@mui/material";
 import { ChangeEvent, useState, useEffect } from "react";
 
 export interface RequestFiltersProps {
@@ -24,10 +31,31 @@ const RequestFilters = ({
         maxBudget: "",
     });
 
+    // Validation state
+    const [budgetError, setBudgetError] = useState<string>("");
+
+    // Validate budget range
+    const validateBudgetRange = (minBudget: string, maxBudget: string) => {
+        if (minBudget && maxBudget) {
+            const min = parseFloat(minBudget);
+            const max = parseFloat(maxBudget);
+            if (min > max) {
+                setBudgetError(
+                    "Minimum budget cannot be greater than maximum budget"
+                );
+                return false;
+            }
+        }
+        setBudgetError("");
+        return true;
+    };
+
     // Debounce filter changes
     useEffect(() => {
         const timeout = setTimeout(() => {
-            onFilterChange(filters);
+            if (validateBudgetRange(filters.minBudget, filters.maxBudget)) {
+                onFilterChange(filters);
+            }
         }, 300);
         return () => clearTimeout(timeout);
     }, [filters, onFilterChange]);
@@ -111,6 +139,7 @@ const RequestFilters = ({
                     onChange={handleChange}
                     size="small"
                     type="number"
+                    error={!!budgetError}
                     InputProps={{
                         startAdornment: (
                             <InputAdornment position="start">$</InputAdornment>
@@ -130,6 +159,7 @@ const RequestFilters = ({
                     onChange={handleChange}
                     size="small"
                     type="number"
+                    error={!!budgetError}
                     InputProps={{
                         startAdornment: (
                             <InputAdornment position="start">$</InputAdornment>
@@ -143,6 +173,15 @@ const RequestFilters = ({
                     sx={{ minWidth: 120 }}
                 />
             </Stack>
+            {budgetError && (
+                <Alert
+                    severity="error"
+                    sx={{ mb: 2, mt: 1 }}
+                    data-testid="budget-error"
+                >
+                    {budgetError}
+                </Alert>
+            )}
         </Box>
     );
 };
