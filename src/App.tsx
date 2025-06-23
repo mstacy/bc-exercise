@@ -5,6 +5,7 @@ import LoginPage from "./pages/login/page";
 import SupervisorPage from "./pages/supervisor/page";
 import { UserProvider } from "./auth/UserContext";
 import PrivateRoute from "./auth/PrivateRoute";
+import Layout from "./components/Layout";
 
 const router = createBrowserRouter([
     {
@@ -16,20 +17,26 @@ const router = createBrowserRouter([
         element: <LoginPage />,
     },
     {
-        path: "/employee",
-        element: (
-            <PrivateRoute requiredRole="employee">
-                <EmployeePage />
-            </PrivateRoute>
-        ),
-    },
-    {
-        path: "/supervisor",
-        element: (
-            <PrivateRoute requiredRole="supervisor">
-                <SupervisorPage />
-            </PrivateRoute>
-        ),
+        path: "/",
+        element: <Layout />,
+        children: [
+            {
+                path: "employee",
+                element: (
+                    <PrivateRoute requiredRole="employee">
+                        <EmployeePage />
+                    </PrivateRoute>
+                ),
+            },
+            {
+                path: "supervisor",
+                element: (
+                    <PrivateRoute requiredRole="supervisor">
+                        <SupervisorPage />
+                    </PrivateRoute>
+                ),
+            },
+        ],
     },
 ]);
 
