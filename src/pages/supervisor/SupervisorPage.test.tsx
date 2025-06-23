@@ -573,9 +573,7 @@ describe("SupervisorPage", () => {
                 expect(
                     screen.getByTestId("table-submitted")
                 ).toBeInTheDocument();
-                // expect(screen.getAllByRole("row")).toHaveLength(
-                //     expect.any(Number)
-                // );
+                expect(screen.getAllByRole("row").length).toBeGreaterThan(0);
             });
         });
 
