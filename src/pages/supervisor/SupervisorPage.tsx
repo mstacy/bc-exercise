@@ -103,7 +103,7 @@ const SupervisorPage = () => {
     };
 
     return (
-        <Box p={3}>
+        <Box p={3} data-testid="supervisor-page">
             <RequestFilters
                 employeeNames={employeeNames}
                 onFilterChange={setFilters}
@@ -114,11 +114,14 @@ const SupervisorPage = () => {
                     justifyContent="center"
                     alignItems="center"
                     minHeight="40vh"
+                    data-testid="loading-container"
                 >
-                    <CircularProgress />
+                    <CircularProgress data-testid="loading-spinner" />
                 </Box>
             ) : error ? (
-                <Alert severity="error">{error}</Alert>
+                <Alert severity="error" data-testid="error-alert">
+                    {error}
+                </Alert>
             ) : (
                 <RequestTable
                     requests={sortedRequests}

@@ -38,7 +38,7 @@ const RequestFilters = ({
     };
 
     return (
-        <Box mb={2}>
+        <Box mb={2} data-testid="request-filters">
             <Stack direction={{ xs: "column", sm: "row" }} spacing={2}>
                 <TextField
                     select
@@ -48,10 +48,17 @@ const RequestFilters = ({
                     onChange={handleChange}
                     size="small"
                     sx={{ minWidth: 160 }}
+                    inputProps={{
+                        "data-testid": "employee-name-filter",
+                    }}
                 >
                     <MenuItem value="">All</MenuItem>
                     {employeeNames.map((name) => (
-                        <MenuItem key={name} value={name}>
+                        <MenuItem
+                            data-testid={`employee-name-${name}`}
+                            key={name}
+                            value={name}
+                        >
                             {name}
                         </MenuItem>
                     ))}
@@ -64,14 +71,38 @@ const RequestFilters = ({
                     onChange={handleChange}
                     size="small"
                     sx={{ minWidth: 160 }}
+                    slotProps={{
+                        select: {
+                            inputProps: {
+                                "data-testid": "status-filter",
+                            },
+                        },
+                    }}
                 >
-                    <MenuItem value="">All</MenuItem>
-                    <MenuItem value="draft">Draft</MenuItem>
-                    <MenuItem value="submitted">
+                    <MenuItem value="" data-testid="status-option-all">
+                        All
+                    </MenuItem>
+                    <MenuItem value="draft" data-testid="status-option-draft">
+                        Draft
+                    </MenuItem>
+                    <MenuItem
+                        value="submitted"
+                        data-testid="status-option-submitted"
+                    >
                         Submitted for Approval
                     </MenuItem>
-                    <MenuItem value="approved">Approved</MenuItem>
-                    <MenuItem value="rejected">Rejected</MenuItem>
+                    <MenuItem
+                        value="approved"
+                        data-testid="status-option-approved"
+                    >
+                        Approved
+                    </MenuItem>
+                    <MenuItem
+                        value="rejected"
+                        data-testid="status-option-rejected"
+                    >
+                        Rejected
+                    </MenuItem>
                 </TextField>
                 <TextField
                     label="Min Budget"
@@ -84,7 +115,11 @@ const RequestFilters = ({
                         startAdornment: (
                             <InputAdornment position="start">$</InputAdornment>
                         ),
-                        inputProps: { min: 0, step: 0.01 },
+                        inputProps: {
+                            min: 0,
+                            step: 0.01,
+                            "data-testid": "min-budget-filter",
+                        },
                     }}
                     sx={{ minWidth: 120 }}
                 />
@@ -99,7 +134,11 @@ const RequestFilters = ({
                         startAdornment: (
                             <InputAdornment position="start">$</InputAdornment>
                         ),
-                        inputProps: { min: 0, step: 0.01 },
+                        inputProps: {
+                            min: 0,
+                            step: 0.01,
+                            "data-testid": "max-budget-filter",
+                        },
                     }}
                     sx={{ minWidth: 120 }}
                 />

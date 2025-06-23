@@ -33,6 +33,7 @@
         "test:privateroute": "react-scripts test --testPathPattern=PrivateRoute.test.tsx --watchAll=false",
         "test:login": "run-p test --testPathPattern=Login.test.tsx --watchAll=false mock-express-server",
         "test:employee": "run-p test --testPathPattern=Employee.test.tsx --watchAll=false mock-express-server",
+        "test:supervisor": "run-p test --testPathPattern=Supervisor.test.tsx --watchAll=false mock-express-server",
         "eject": "react-scripts eject"
     },
     "eslintConfig": {
