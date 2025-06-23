@@ -29,11 +29,8 @@
         "mock-express-server": "node ./mock-express-server/server.js",
         "dev": "run-p start mock-express-server",
         "build": "react-scripts build",
-        "test": "react-scripts test --watchAll=true",
-        "test:privateroute": "react-scripts test --testPathPattern=PrivateRoute.test.tsx --watchAll=false",
-        "test:login": "run-p test --testPathPattern=Login.test.tsx --watchAll=false mock-express-server",
-        "test:employee": "run-p test --testPathPattern=Employee.test.tsx --watchAll=false mock-express-server",
-        "test:supervisor": "run-p test --testPathPattern=Supervisor.test.tsx --watchAll=false mock-express-server",
+        "test": "react-scripts test",
+        "test:all": "react-scripts test --watchAll",
         "eject": "react-scripts eject"
     },
     "eslintConfig": {

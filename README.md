@@ -1,46 +1,220 @@
-# Getting Started with Create React App
+# Certification Request Management System
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+A React-based web application for managing employee certification requests. This application allows employees to submit certification requests and supervisors to review, approve, or reject them.
 
-## Available Scripts
+## 🚀 Technology Stack
 
-In the project directory, you can run:
+### Frontend
 
-### `npm start`
+-   **React 19.1.0** - Modern React with hooks and functional components
+-   **TypeScript 4.9.5** - Type-safe JavaScript development
+-   **Material-UI (MUI) 7.1.2** - React component library for consistent UI design
+-   **React Router DOM 6.30.1** - Client-side routing
+-   **React Hook Form 7.58.1** - Form state management and validation
+-   **Day.js 1.11.13** - Lightweight date manipulation library
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+### Testing
 
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
+-   **Jest** - JavaScript testing framework
+-   **React Testing Library 16.3.0** - React component testing utilities
+-   **@testing-library/user-event 14.6.1** - User interaction simulation
 
-### `npm test`
+### Development Tools
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+-   **Create React App 5.0.1** - React application boilerplate
+-   **ESLint** - Code linting and formatting
+-   **npm-run-all 4.1.5** - Run multiple npm scripts concurrently
 
-### `npm run build`
+### Backend (Mock Server)
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+-   **Express.js** - Node.js web framework
+-   **CORS** - Cross-origin resource sharing middleware
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+## 📋 Prerequisites
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+Before you begin, ensure you have the following installed:
 
-### `npm run eject`
+-   **Node.js** (version 16 or higher)
+-   **npm** (comes with Node.js)
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+## 🛠️ Setup Instructions
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+### 1. Clone the Repository
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
+```bash
+git clone <repository-url>
+cd fe-module-exercise
+```
 
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
+### 2. Install Dependencies
 
-## Learn More
+```bash
+npm install
+```
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+### 3. Start the Mock Backend Server
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+The application requires a mock Express server to run. Start it in a separate terminal:
+
+```bash
+# Navigate to the mock server directory
+cd mock-express-server
+
+# Install server dependencies
+npm install
+
+# Start the mock server
+npm start
+```
+
+The mock server will run on `http://localhost:3001`
+
+**Alternative**: You can use `npm run dev` from the project root to start both the React application and the mock server simultaneously (see step 5 for details).
+
+### 4. Start the Frontend Application
+
+In a new terminal window, start the React application:
+
+```bash
+# From the project root
+npm start
+```
+
+The application will open in your browser at `http://localhost:3000`
+
+### 5. Alternative: Run Both Servers Concurrently
+
+You can run both the frontend and backend servers simultaneously using:
+
+```bash
+npm run dev
+```
+
+This will start both the React app and the mock server concurrently.
+
+## 🧪 Testing Instructions
+
+### Running Tests
+
+#### Run All Tests
+
+```bash
+npm test
+```
+
+This starts the test runner in watch mode, which will rerun tests when files change.
+
+#### Run All Tests Once
+
+```bash
+npm run test:all
+```
+
+This runs all tests once and exits.
+
+#### Run Tests in Watch Mode
+
+```bash
+npm test -- --watch
+```
+
+This runs tests in watch mode, automatically rerunning when files change.
+
+### Test Structure
+
+The application includes comprehensive tests for:
+
+-   **Component Rendering**: Tests for all React components
+-   **User Interactions**: Form submissions, button clicks, navigation
+-   **API Integration**: Mock fetch calls and error handling
+-   **Filtering and Sorting**: Request filtering and table sorting functionality
+-   **Authentication**: Login/logout flows and protected routes
+-   **Accessibility**: Proper ARIA labels and keyboard navigation
+
+### Test Files Location
+
+-   `src/**/*.test.tsx` - Component and integration tests
+-   `src/**/*.test.ts` - Utility and helper function tests
+
+## 📁 Project Structure
+
+```
+fe-module-exercise/
+├── public/                 # Static assets
+├── src/
+│   ├── auth/              # Authentication components and context
+│   ├── components/        # Reusable UI components
+│   ├── pages/            # Page components
+│   │   ├── employee/     # Employee page
+│   │   ├── home/         # Home page - redirects to login
+│   │   ├── login/        # Login page
+│   │   └── supervisor/   # Supervisor page
+│   ├── App.tsx           # Main application component
+│   └── index.tsx         # Application entry point
+├── mock-express-server/  # Mock backend server
+├── package.json          # Dependencies and scripts
+└── README.md            # This file
+```
+
+## 🔧 Available Scripts
+
+-   `npm start` - Start the React development server
+-   `npm run dev` - Start both frontend and backend servers concurrently
+-   `npm run mock-express-server` - Start only the mock backend server
+-   `npm test` - Run tests in watch mode
+-   `npm run test:all` - Run all tests once
+-   `npm run build` - Build the application for production
+-   `npm run eject` - Eject from Create React App (one-way operation)
+
+## 🌟 Features
+
+### Employee Features
+
+-   Submit certification requests
+-   View request status and history
+-   Update request details
+
+### Supervisor Features
+
+-   View all certification requests
+-   Filter requests by employee, status, and budget range
+-   Sort requests by various criteria
+-   Approve or reject requests
+-   Group requests by status for better organization
+
+### General Features
+
+-   Responsive design for mobile and desktop
+-   Real-time form validation
+-   Error handling and user feedback
+-   Accessibility compliance
+
+## 🔐 Authentication
+
+The application includes a mock authentication system with predefined users:
+
+-   **Employee**: `alice` / `password123`, `bob` / `password123`
+-   **Supervisor**: `carol` / `adminpass`
+
+## 🚀 Deployment
+
+To build the application for production:
+
+```bash
+npm run build
+```
+
+This creates a `build` folder with optimized production files ready for deployment.
+
+## 🤝 Contributing
+
+1. Fork the repository
+2. Create a feature branch
+3. Make your changes
+4. Add tests for new functionality
+5. Ensure all tests pass
+6. Submit a pull request
+
+## 📝 License
+
+This project is for educational purposes and demonstration of React development skills.
