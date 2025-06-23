@@ -1,8 +1,8 @@
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
-import HomePage from "./pages/home/page";
-import EmployeePage from "./pages/employee/page";
-import LoginPage from "./pages/login/page";
-import SupervisorPage from "./pages/supervisor/page";
+import HomePage from "./pages/home/HomePage";
+import EmployeePage from "./pages/employee/EmployeePage";
+import LoginPage from "./pages/login/LoginPage";
+import SupervisorPage from "./pages/supervisor/SupervisorPage";
 import { UserProvider } from "./auth/UserContext";
 import PrivateRoute from "./auth/PrivateRoute";
 import Layout from "./components/Layout";

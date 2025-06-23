@@ -14,7 +14,7 @@ import {
     FormControl,
     InputLabel,
 } from "@mui/material";
-import type { CertificationRequest } from "./page";
+import type { CertificationRequest } from "./SupervisorPage";
 import dayjs from "dayjs";
 
 export type StatusType = "draft" | "submitted" | "approved" | "rejected";

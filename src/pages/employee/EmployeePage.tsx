@@ -102,13 +102,26 @@ const EmployeePage = () => {
             alignItems="flex-start"
             minHeight="80vh"
             mt={4}
+            data-testid="employee-page"
         >
-            <Card sx={{ width: 500, p: 2 }}>
+            <Card
+                sx={{ width: 500, p: 2 }}
+                data-testid="certification-form-card"
+            >
                 <CardContent>
-                    <Typography variant="h5" fontWeight={600} mb={2}>
-                        Certification Request
+                    <Typography
+                        variant="h5"
+                        fontWeight={600}
+                        mb={2}
+                        data-testid="page-title"
+                    >
+                        Certification Request TEST
                     </Typography>
-                    <form onSubmit={handleSubmit(onSubmit)} noValidate>
+                    <form
+                        onSubmit={handleSubmit(onSubmit)}
+                        noValidate
+                        data-testid="certification-form"
+                    >
                         <Stack spacing={3}>
                             <Controller
                                 name="description"
@@ -125,6 +138,9 @@ const EmployeePage = () => {
                                         helperText={errors.description?.message}
                                         disabled={loading || isSubmitting}
                                         fullWidth
+                                        inputProps={{
+                                            "data-testid": "description-field",
+                                        }}
                                     />
                                 )}
                             />
@@ -155,7 +171,11 @@ const EmployeePage = () => {
                                                     $
                                                 </span>
                                             ),
-                                            inputProps: { min: 0, step: 0.01 },
+                                            inputProps: {
+                                                min: 0,
+                                                step: 0.01,
+                                                "data-testid": "budget-field",
+                                            },
                                         }}
                                     />
                                 )}
@@ -194,6 +214,10 @@ const EmployeePage = () => {
                                                     disabled:
                                                         loading || isSubmitting,
                                                     fullWidth: true,
+                                                    inputProps: {
+                                                        "data-testid":
+                                                            "date-field",
+                                                    },
                                                 },
                                             }}
                                             value={field.value}
@@ -204,9 +228,19 @@ const EmployeePage = () => {
                                     )}
                                 />
                             </LocalizationProvider>
-                            {error && <Alert severity="error">{error}</Alert>}
+                            {error && (
+                                <Alert
+                                    severity="error"
+                                    data-testid="error-alert"
+                                >
+                                    {error}
+                                </Alert>
+                            )}
                             {success && (
-                                <Alert severity="success">
+                                <Alert
+                                    severity="success"
+                                    data-testid="success-alert"
+                                >
                                     Request submitted successfully!
                                 </Alert>
                             )}
@@ -214,11 +248,13 @@ const EmployeePage = () => {
                                 direction="row"
                                 spacing={2}
                                 justifyContent="flex-end"
+                                data-testid="form-actions"
                             >
                                 <Button
                                     onClick={handleClear}
                                     disabled={loading || isSubmitting}
                                     variant="outlined"
+                                    data-testid="clear-button"
                                 >
                                     Clear
                                 </Button>
@@ -230,6 +266,7 @@ const EmployeePage = () => {
                                     }}
                                     disabled={loading || isSubmitting}
                                     variant="outlined"
+                                    data-testid="reset-button"
                                 >
                                     Reset
                                 </Button>
@@ -239,9 +276,13 @@ const EmployeePage = () => {
                                     disabled={loading || isSubmitting}
                                     startIcon={
                                         loading ? (
-                                            <CircularProgress size={18} />
+                                            <CircularProgress
+                                                size={18}
+                                                data-testid="submit-loading"
+                                            />
                                         ) : null
                                     }
+                                    data-testid="submit-button"
                                 >
                                     Submit
                                 </Button>
