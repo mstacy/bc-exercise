@@ -6,21 +6,23 @@ import {
     TableHead,
     TableRow,
     Paper,
-    Typography,
     Select,
     MenuItem,
     Box,
     TableSortLabel,
-    FormControl,
-    InputLabel,
 } from "@mui/material";
 import type { CertificationRequest } from "./SupervisorPage";
 import dayjs from "dayjs";
 
 export type StatusType = "draft" | "submitted" | "approved" | "rejected";
 
-export interface RequestTableProps {
+export interface GroupedRequests {
+    status: StatusType;
     requests: CertificationRequest[];
+}
+
+export interface RequestTableProps {
+    requests: GroupedRequests[];
     onStatusChange: (id: number, newStatus: StatusType) => void;
     sortBy: string;
     sortDirection: "asc" | "desc";
@@ -34,8 +36,6 @@ const statusLabels: Record<StatusType, string> = {
     rejected: "Rejected",
 };
 
-const groupOrder: StatusType[] = ["draft", "submitted", "approved", "rejected"];
-
 const RequestTable = ({
     requests,
     onStatusChange,
@@ -43,95 +43,76 @@ const RequestTable = ({
     sortDirection,
     onSortChange,
 }: RequestTableProps) => {
-    // Group requests by status
-    const grouped = groupOrder.map((status) => ({
-        status,
-        items: requests.filter((r) => r.status === status),
-    }));
-
     return (
         <Box data-testid="request-table">
-            {grouped.map((group) => (
-                <Box
-                    key={group.status}
-                    mb={4}
-                    data-testid={`status-group-${group.status}`}
-                >
-                    <Typography
-                        variant="h6"
-                        mb={1}
-                        data-testid={`group-title-${group.status}`}
-                    >
-                        {statusLabels[group.status as StatusType]}
-                    </Typography>
-                    <TableContainer
-                        component={Paper}
-                        data-testid={`table-container-${group.status}`}
-                    >
-                        <Table
-                            size="small"
-                            data-testid={`table-${group.status}`}
-                        >
-                            <TableHead>
-                                <TableRow>
-                                    <TableCell
-                                        data-testid={`employee-header-${group.status}`}
+            <TableContainer component={Paper} data-testid="table-container">
+                <Table size="small" data-testid="table">
+                    <TableHead>
+                        <TableRow>
+                            <TableCell data-testid="employee-header">
+                                Employee
+                            </TableCell>
+                            <TableCell data-testid="description-header">
+                                Description
+                            </TableCell>
+                            <TableCell>
+                                <TableSortLabel
+                                    active={sortBy === "estimatedBudget"}
+                                    direction={
+                                        sortBy === "estimatedBudget"
+                                            ? sortDirection
+                                            : "asc"
+                                    }
+                                    onClick={() =>
+                                        onSortChange("estimatedBudget")
+                                    }
+                                    data-testid="budget-sort"
+                                >
+                                    Budget
+                                </TableSortLabel>
+                            </TableCell>
+                            <TableCell>
+                                <TableSortLabel
+                                    active={sortBy === "expectedDate"}
+                                    direction={
+                                        sortBy === "expectedDate"
+                                            ? sortDirection
+                                            : "asc"
+                                    }
+                                    onClick={() => onSortChange("expectedDate")}
+                                    data-testid="date-sort"
+                                >
+                                    Expected Date
+                                </TableSortLabel>
+                            </TableCell>
+                            <TableCell data-testid="update-status-header">
+                                Status
+                            </TableCell>
+                        </TableRow>
+                    </TableHead>
+                    <TableBody>
+                        {requests.map((group) => (
+                            <>
+                                {group.requests.length > 0 && (
+                                    <TableRow
+                                        key={`group-${group.status}`}
+                                        data-testid={`group-header-${group.status}`}
                                     >
-                                        Employee
-                                    </TableCell>
-                                    <TableCell
-                                        data-testid={`description-header-${group.status}`}
-                                    >
-                                        Description
-                                    </TableCell>
-                                    <TableCell>
-                                        <TableSortLabel
-                                            active={
-                                                sortBy === "estimatedBudget"
-                                            }
-                                            direction={
-                                                sortBy === "estimatedBudget"
-                                                    ? sortDirection
-                                                    : "asc"
-                                            }
-                                            onClick={() =>
-                                                onSortChange("estimatedBudget")
-                                            }
-                                            data-testid={`budget-sort-${group.status}`}
+                                        <TableCell
+                                            colSpan={5}
+                                            sx={{
+                                                backgroundColor: "grey.100",
+                                                fontWeight: "bold",
+                                                fontSize: "1.1rem",
+                                            }}
+                                            data-testid={`group-title-${group.status}`}
                                         >
-                                            Budget
-                                        </TableSortLabel>
-                                    </TableCell>
-                                    <TableCell>
-                                        <TableSortLabel
-                                            active={sortBy === "expectedDate"}
-                                            direction={
-                                                sortBy === "expectedDate"
-                                                    ? sortDirection
-                                                    : "asc"
-                                            }
-                                            onClick={() =>
-                                                onSortChange("expectedDate")
-                                            }
-                                            data-testid={`date-sort-${group.status}`}
-                                        >
-                                            Expected Date
-                                        </TableSortLabel>
-                                    </TableCell>
-                                    <TableCell
-                                        data-testid={`status-header-${group.status}`}
-                                    >
-                                        Status
-                                    </TableCell>
-                                    <TableCell
-                                        data-testid={`update-status-header-${group.status}`}
-                                    >
-                                        Update Status
-                                    </TableCell>
-                                </TableRow>
-                            </TableHead>
-                            <TableBody>
-                                {group.items.map((req) => (
+                                            {statusLabels[group.status]} (
+                                            {group.requests.length})
+                                        </TableCell>
+                                    </TableRow>
+                                )}
+                                {group.requests.map((req) => (
                                     <TableRow
                                         key={req.id}
                                         data-testid={`request-row-${req.id}`}
@@ -160,66 +141,49 @@ const RequestTable = ({
                                                 "YYYY-MM-DD"
                                             )}
                                         </TableCell>
-                                        <TableCell
-                                            data-testid={`status-${req.id}`}
-                                        >
-                                            {statusLabels[req.status]}
-                                        </TableCell>
                                         <TableCell>
-                                            <FormControl
+                                            <Select
+                                                value={req.status}
+                                                onChange={(e) =>
+                                                    onStatusChange(
+                                                        req.id,
+                                                        e.target
+                                                            .value as StatusType
+                                                    )
+                                                }
+                                                inputProps={{
+                                                    "data-testid": `status-select-${req.id}`,
+                                                }}
                                                 size="small"
-                                                variant="outlined"
+                                                sx={{
+                                                    minWidth: 190,
+                                                    fontSize: ".875rem",
+                                                }}
                                             >
-                                                <InputLabel>Status</InputLabel>
-                                                <Select
-                                                    value={req.status}
-                                                    label="Status"
-                                                    onChange={(e) =>
-                                                        onStatusChange(
-                                                            req.id,
-                                                            e.target
-                                                                .value as StatusType
-                                                        )
-                                                    }
-                                                    inputProps={{
-                                                        "data-testid": `status-select-${req.id}`,
-                                                    }}
-                                                >
-                                                    {groupOrder.map(
-                                                        (status) => (
-                                                            <MenuItem
-                                                                key={status}
-                                                                value={status}
-                                                                data-testid={`status-option-${req.id}-${status}`}
-                                                            >
-                                                                {
-                                                                    statusLabels[
-                                                                        status
-                                                                    ]
-                                                                }
-                                                            </MenuItem>
-                                                        )
-                                                    )}
-                                                </Select>
-                                            </FormControl>
+                                                {Object.keys(statusLabels).map(
+                                                    (status) => (
+                                                        <MenuItem
+                                                            key={status}
+                                                            value={status}
+                                                            data-testid={`status-option-${req.id}-${status}`}
+                                                        >
+                                                            {
+                                                                statusLabels[
+                                                                    status as StatusType
+                                                                ]
+                                                            }
+                                                        </MenuItem>
+                                                    )
+                                                )}
+                                            </Select>
                                         </TableCell>
                                     </TableRow>
                                 ))}
-                            </TableBody>
-                        </Table>
-                    </TableContainer>
-                    {group.items.length === 0 && (
-                        <Typography
-                            variant="body2"
-                            color="text.secondary"
-                            mt={2}
-                            data-testid={`empty-group-${group.status}`}
-                        >
-                            No requests in this group.
-                        </Typography>
-                    )}
-                </Box>
-            ))}
+                            </>
+                        ))}
+                    </TableBody>
+                </Table>
+            </TableContainer>
         </Box>
     );
 };

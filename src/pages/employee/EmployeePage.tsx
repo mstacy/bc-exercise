@@ -58,9 +58,15 @@ const EmployeePage = () => {
         setSuccess(false);
         try {
             if (!user) throw new Error("User not found");
+            const username =
+                user.username.charAt(0) !==
+                user.username.charAt(0).toUpperCase()
+                    ? user.username.charAt(0).toUpperCase() +
+                      user.username.slice(1)
+                    : user.username;
             const request: CertificationRequest = {
                 employeeId: user.id,
-                employeeName: user.username,
+                employeeName: username,
                 description: data.description,
                 estimatedBudget: Number(data.budget),
                 expectedDate: data.expectedDate

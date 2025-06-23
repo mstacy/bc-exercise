@@ -1,5 +1,5 @@
 import { useEffect, useState, useMemo } from "react";
-import { Box, CircularProgress, Alert } from "@mui/material";
+import { Box, CircularProgress, Alert, Typography } from "@mui/material";
 import RequestFilters, { FiltersState } from "./RequestFilters";
 import RequestTable, { StatusType } from "./RequestTable";
 
@@ -79,6 +79,20 @@ const SupervisorPage = () => {
         });
     }, [filteredRequests, sortBy, sortDirection]);
 
+    // Grouping by status
+    const groupedRequests = useMemo(() => {
+        const statusOrder: StatusType[] = [
+            "draft",
+            "submitted",
+            "approved",
+            "rejected",
+        ];
+        return statusOrder.map((status) => ({
+            status,
+            requests: sortedRequests.filter((req) => req.status === status),
+        }));
+    }, [sortedRequests]);
+
     // Unique employee names for filter dropdown
     const employeeNames = useMemo(
         () => Array.from(new Set(requests.map((r) => r.employeeName))),
@@ -104,6 +118,9 @@ const SupervisorPage = () => {
 
     return (
         <Box p={3} data-testid="supervisor-page">
+            <Typography variant="h1" sx={{ mb: 2, fontSize: "2rem" }}>
+                Certification Requests
+            </Typography>
             <RequestFilters
                 employeeNames={employeeNames}
                 onFilterChange={setFilters}
@@ -124,7 +141,7 @@ const SupervisorPage = () => {
                 </Alert>
             ) : (
                 <RequestTable
-                    requests={sortedRequests}
+                    requests={groupedRequests}
                     onStatusChange={handleStatusChange}
                     sortBy={sortBy}
                     sortDirection={sortDirection}

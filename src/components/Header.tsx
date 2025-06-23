@@ -19,7 +19,10 @@ const Header = () => {
                 </Typography>
                 {user && (
                     <Box display="flex" alignItems="center" gap={2}>
-                        <Typography variant="body1">
+                        <Typography
+                            variant="body1"
+                            sx={{ textTransform: "capitalize" }}
+                        >
                             {user.username} ({user.role})
                         </Typography>
                         <Button
