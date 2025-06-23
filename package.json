@@ -31,6 +31,7 @@
         "dev": "run-p start mock-express-server",
         "build": "react-scripts build",
         "test": "react-scripts test",
+        "test:privateroute": "react-scripts test --testPathPattern=PrivateRoute.test.tsx --watchAll=false",
         "eject": "react-scripts eject"
     },
     "eslintConfig": {

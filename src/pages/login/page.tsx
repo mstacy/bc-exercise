@@ -105,7 +105,7 @@ const LoginPage = () => {
 
         try {
             const user = await authenticateUser(data.username, data.password);
-
+            console.log({ user });
             if (user) {
                 setUser(user);
                 if (user.role === "employee") {
@@ -221,6 +221,9 @@ const LoginPage = () => {
                                                 </InputAdornment>
                                             ),
                                         }}
+                                        inputProps={{
+                                            "data-testid": "login-username",
+                                        }}
                                     />
                                 )}
                             />
@@ -270,6 +273,9 @@ const LoginPage = () => {
                                                 </InputAdornment>
                                             ),
                                         }}
+                                        inputProps={{
+                                            "data-testid": "login-password",
+                                        }}
                                     />
                                 )}
                             />
@@ -292,6 +298,7 @@ const LoginPage = () => {
                                     fontWeight: "bold",
                                 }}
                                 disabled={isLoading}
+                                data-testid="login-submit"
                             >
                                 {isLoading ? (
                                     <CircularProgress
