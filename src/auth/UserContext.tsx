@@ -28,7 +28,7 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
     // Load user from localStorage on mount
     useEffect(() => {
         const stored = localStorage.getItem("user");
-        console.log({ stored });
+
         if (stored) {
             try {
                 setUserState(JSON.parse(stored));

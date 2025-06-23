@@ -75,7 +75,7 @@ const EmployeePage = () => {
                 },
                 body: JSON.stringify(request),
             });
-            console.log({ response });
+
             if (!response.ok) {
                 throw new Error("Failed to submit request");
             }
