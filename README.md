@@ -42,8 +42,8 @@ Before you begin, ensure you have the following installed:
 ### 1. Clone the Repository
 
 ```bash
-git clone <repository-url>
-cd fe-module-exercise
+git clone https://github.com/mstacy/bc-exercise.git
+cd bc-exercise
 ```
 
 ### 2. Install Dependencies

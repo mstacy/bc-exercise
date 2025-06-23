@@ -6,7 +6,7 @@ import {
     InputAdornment,
     Alert,
 } from "@mui/material";
-import { ChangeEvent, useState, useEffect } from "react";
+import { ChangeEvent, useState, useEffect, useMemo } from "react";
 
 export interface RequestFiltersProps {
     employeeNames: string[];
@@ -31,34 +31,38 @@ const RequestFilters = ({
         maxBudget: "",
     });
 
-    // Validation state
-    const [budgetError, setBudgetError] = useState<string>("");
+    // Cached budget validation
+    const budgetValidation = useMemo(() => {
+        const { minBudget, maxBudget } = filters;
 
-    // Validate budget range
-    const validateBudgetRange = (minBudget: string, maxBudget: string) => {
         if (minBudget && maxBudget) {
             const min = parseFloat(minBudget);
             const max = parseFloat(maxBudget);
+
+            if (isNaN(min) || isNaN(max)) {
+                return { isValid: true, error: "" };
+            }
+
             if (min > max) {
-                setBudgetError(
-                    "Minimum budget cannot be greater than maximum budget"
-                );
-                return false;
+                return {
+                    isValid: false,
+                    error: "Minimum budget cannot be greater than maximum budget",
+                };
             }
         }
-        setBudgetError("");
-        return true;
-    };
+
+        return { isValid: true, error: "" };
+    }, [filters.minBudget, filters.maxBudget]);
 
     // Debounce filter changes
     useEffect(() => {
         const timeout = setTimeout(() => {
-            if (validateBudgetRange(filters.minBudget, filters.maxBudget)) {
+            if (budgetValidation.isValid) {
                 onFilterChange(filters);
             }
         }, 300);
         return () => clearTimeout(timeout);
-    }, [filters, onFilterChange]);
+    }, [filters, onFilterChange, budgetValidation.isValid]);
 
     const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
@@ -139,7 +143,7 @@ const RequestFilters = ({
                     onChange={handleChange}
                     size="small"
                     type="number"
-                    error={!!budgetError}
+                    error={!budgetValidation.isValid}
                     InputProps={{
                         startAdornment: (
                             <InputAdornment position="start">$</InputAdornment>
@@ -159,7 +163,7 @@ const RequestFilters = ({
                     onChange={handleChange}
                     size="small"
                     type="number"
-                    error={!!budgetError}
+                    error={!budgetValidation.isValid}
                     InputProps={{
                         startAdornment: (
                             <InputAdornment position="start">$</InputAdornment>
@@ -173,13 +177,13 @@ const RequestFilters = ({
                     sx={{ minWidth: 120 }}
                 />
             </Stack>
-            {budgetError && (
+            {budgetValidation.error && (
                 <Alert
                     severity="error"
                     sx={{ mb: 2, mt: 1 }}
                     data-testid="budget-error"
                 >
-                    {budgetError}
+                    {budgetValidation.error}
                 </Alert>
             )}
         </Box>

@@ -15,7 +15,7 @@ const Header = () => {
         <AppBar position="static" color="primary" sx={{ mb: 4 }}>
             <Toolbar>
                 <Typography variant="h6" sx={{ flexGrow: 1 }}>
-                    FE Module Exercise
+                    Frontend Module Exercise
                 </Typography>
                 {user && (
                     <Box display="flex" alignItems="center" gap={2}>
