@@ -3,6 +3,8 @@ import HomePage from "./pages/home/page";
 import EmployeePage from "./pages/employee/page";
 import LoginPage from "./pages/login/page";
 import SupervisorPage from "./pages/supervisor/page";
+import { UserProvider } from "./context/UserContext";
+import PrivateRoute from "./context/PrivateRoute";
 
 const router = createBrowserRouter([
     {
@@ -15,16 +17,28 @@ const router = createBrowserRouter([
     },
     {
         path: "/employee",
-        element: <EmployeePage />,
+        element: (
+            <PrivateRoute requiredRole="employee">
+                <EmployeePage />
+            </PrivateRoute>
+        ),
     },
     {
         path: "/supervisor",
-        element: <SupervisorPage />,
+        element: (
+            <PrivateRoute requiredRole="supervisor">
+                <SupervisorPage />
+            </PrivateRoute>
+        ),
     },
 ]);
 
 function App() {
-    return <RouterProvider router={router} />;
+    return (
+        <UserProvider>
+            <RouterProvider router={router} />
+        </UserProvider>
+    );
 }
 
 export default App;

@@ -1,6 +1,6 @@
 import { useForm, Controller } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
     Box,
     Card,
@@ -21,6 +21,7 @@ import {
     VisibilityOff,
 } from "@mui/icons-material";
 import { IconButton, InputAdornment } from "@mui/material";
+import { useUser } from "../../context/UserContext";
 
 interface LoginFormData {
     username: string;
@@ -34,11 +35,12 @@ interface User {
     token: string;
 }
 
-const LoginPage = () => {
+const LoginForm = () => {
     const navigate = useNavigate();
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState("");
     const [showPassword, setShowPassword] = useState(false);
+    const { user, setUser } = useUser();
 
     const {
         control,
@@ -52,14 +54,24 @@ const LoginPage = () => {
         },
     });
 
+    // Redirect if already logged in
+    useEffect(() => {
+        if (user) {
+            if (user.role === "employee") {
+                navigate("/employee", { replace: true });
+            } else if (user.role === "supervisor") {
+                navigate("/supervisor", { replace: true });
+            }
+        }
+    }, [user, navigate]);
+
     // Authentication function that makes POST request to backend
     const authenticateUser = async (
         username: string,
         password: string
     ): Promise<User | null> => {
-        console.log({ username, password });
         try {
-            const response = await fetch("http://localhost:3000/login", {
+            const response = await fetch("http://localhost:3001/login", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
@@ -75,7 +87,7 @@ const LoginPage = () => {
             }
 
             const data = await response.json();
-            console.log({ data });
+
             if (data) {
                 return data;
             }
@@ -93,12 +105,9 @@ const LoginPage = () => {
 
         try {
             const user = await authenticateUser(data.username, data.password);
-            console.log({ user });
-            if (user) {
-                // Store user info in localStorage (in a real app, you'd use a more secure method)
-                localStorage.setItem("user", JSON.stringify(user));
 
-                // Redirect based on role
+            if (user) {
+                setUser(user);
                 if (user.role === "employee") {
                     navigate("/employee");
                 } else {
@@ -339,5 +348,7 @@ const LoginPage = () => {
         </Container>
     );
 };
+
+const LoginPage = LoginForm;
 
 export default LoginPage;
