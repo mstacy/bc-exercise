@@ -289,7 +289,7 @@ describe("EmployeePage", () => {
                         },
                         body: JSON.stringify({
                             employeeId: 1,
-                            employeeName: "alice",
+                            employeeName: "Alice",
                             description: "Test certification",
                             estimatedBudget: 500,
                             expectedDate: dayjs(new Date()).format(
