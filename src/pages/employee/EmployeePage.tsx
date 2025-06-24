@@ -1,4 +1,4 @@
-import { useForm, Controller } from "react-hook-form";
+import { useForm, Controller, useWatch } from "react-hook-form";
 import {
     Box,
     Button,
@@ -13,7 +13,7 @@ import {
 import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import dayjs, { Dayjs } from "dayjs";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useUser } from "../../auth/UserContext";
 
 interface CertFormData {
@@ -30,6 +30,8 @@ interface CertificationRequest {
     expectedDate: string;
     status: "submitted" | "draft" | "approved" | "rejected";
 }
+
+const MAX_DESCRIPTION_LENGTH = 360;
 
 const EmployeePage = () => {
     const [loading, setLoading] = useState(false);
@@ -51,6 +53,8 @@ const EmployeePage = () => {
         },
         mode: "onBlur",
     });
+
+    const descriptionValue = useWatch({ control, name: "description" });
 
     const onSubmit = async (data: CertFormData) => {
         setLoading(true);
@@ -94,12 +98,12 @@ const EmployeePage = () => {
         }
     };
 
-    const handleClear = () => {
-        reset();
-        clearErrors();
-        setSuccess(false);
-        setError("");
-    };
+    // Hide success alert after 10 seconds
+    useEffect(() => {
+        if (!success) return;
+        const timer = setTimeout(() => setSuccess(false), 10000);
+        return () => clearTimeout(timer);
+    }, [success]);
 
     return (
         <Box
@@ -132,22 +136,45 @@ const EmployeePage = () => {
                             <Controller
                                 name="description"
                                 control={control}
-                                rules={{ required: "Description is required" }}
+                                rules={{
+                                    required: "Description is required",
+                                    maxLength: {
+                                        value: MAX_DESCRIPTION_LENGTH,
+                                        message: `Description cannot exceed ${MAX_DESCRIPTION_LENGTH} characters`,
+                                    },
+                                }}
                                 render={({ field }) => (
-                                    <TextField
-                                        {...field}
-                                        label="Description"
-                                        multiline
-                                        minRows={3}
-                                        required
-                                        error={!!errors.description}
-                                        helperText={errors.description?.message}
-                                        disabled={loading || isSubmitting}
-                                        fullWidth
-                                        inputProps={{
-                                            "data-testid": "description-field",
-                                        }}
-                                    />
+                                    <>
+                                        <TextField
+                                            {...field}
+                                            label="Description"
+                                            multiline
+                                            minRows={3}
+                                            required
+                                            error={!!errors.description}
+                                            helperText={
+                                                errors.description?.message
+                                            }
+                                            disabled={loading || isSubmitting}
+                                            fullWidth
+                                            inputProps={{
+                                                "data-testid":
+                                                    "description-field",
+                                            }}
+                                        />
+                                        <Box
+                                            textAlign="right"
+                                            color="text.secondary"
+                                            fontSize={13}
+                                            sx={{
+                                                marginTop: `0 !important`,
+                                            }}
+                                        >
+                                            {`${
+                                                (descriptionValue || "").length
+                                            } / ${MAX_DESCRIPTION_LENGTH}`}
+                                        </Box>
+                                    </>
                                 )}
                             />
                             <Controller
@@ -155,9 +182,15 @@ const EmployeePage = () => {
                                 control={control}
                                 rules={{
                                     required: "Estimated budget is required",
-                                    validate: (v) =>
-                                        (v !== "" && Number(v) > 0) ||
-                                        "Budget must be a positive number",
+                                    validate: (v) => {
+                                        if (v === "" || Number(v) <= 0) {
+                                            return "Budget must be a positive number";
+                                        }
+                                        if (Number(v) > 100000) {
+                                            return "Budget cannot exceed $100,000";
+                                        }
+                                        return true;
+                                    },
                                 }}
                                 render={({ field }) => (
                                     <TextField
@@ -179,6 +212,7 @@ const EmployeePage = () => {
                                             ),
                                             inputProps: {
                                                 min: 0,
+                                                max: 100000,
                                                 step: 0.01,
                                                 "data-testid": "budget-field",
                                             },
@@ -257,7 +291,7 @@ const EmployeePage = () => {
                                 data-testid="form-actions"
                             >
                                 <Button
-                                    onClick={handleClear}
+                                    onClick={() => reset()}
                                     disabled={loading || isSubmitting}
                                     variant="outlined"
                                     data-testid="clear-button"
@@ -267,6 +301,7 @@ const EmployeePage = () => {
                                 <Button
                                     onClick={() => {
                                         reset();
+                                        clearErrors();
                                         setSuccess(false);
                                         setError("");
                                     }}
