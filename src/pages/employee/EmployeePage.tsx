@@ -153,7 +153,14 @@ const EmployeePage = () => {
                                             required
                                             error={!!errors.description}
                                             helperText={
-                                                errors.description?.message
+                                                errors.description?.message ? (
+                                                    <span data-testid="description-error">
+                                                        {
+                                                            errors.description
+                                                                .message
+                                                        }
+                                                    </span>
+                                                ) : null
                                             }
                                             disabled={loading || isSubmitting}
                                             fullWidth
@@ -199,7 +206,13 @@ const EmployeePage = () => {
                                         type="number"
                                         required
                                         error={!!errors.budget}
-                                        helperText={errors.budget?.message}
+                                        helperText={
+                                            errors.budget?.message ? (
+                                                <span data-testid="budget-error">
+                                                    {errors.budget.message}
+                                                </span>
+                                            ) : null
+                                        }
                                         disabled={loading || isSubmitting}
                                         fullWidth
                                         InputProps={{

@@ -174,6 +174,28 @@ describe("EmployeePage", () => {
             });
         });
 
+        it("should show error for budget exceeding $100,000", async () => {
+            const user = userEvent.setup();
+            render(
+                <TestWrapper user={mockUser}>
+                    <EmployeePage />
+                </TestWrapper>
+            );
+
+            const budgetField = screen.getByTestId("budget-field");
+
+            await user.type(budgetField, "100001");
+
+            const submitButton = screen.getByTestId("submit-button");
+            await user.click(submitButton);
+
+            await waitFor(() => {
+                expect(
+                    screen.getByText("Budget cannot exceed $100,000")
+                ).toBeInTheDocument();
+            });
+        });
+
         it("should show error for empty expected date", async () => {
             const user = userEvent.setup();
             render(
