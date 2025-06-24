@@ -5,6 +5,7 @@ import {
     Stack,
     InputAdornment,
     Alert,
+    Button,
 } from "@mui/material";
 import { ChangeEvent, useState, useEffect, useMemo } from "react";
 
@@ -20,16 +21,18 @@ export interface FiltersState {
     maxBudget: string;
 }
 
+const initialFilters: FiltersState = {
+    employeeName: "",
+    status: "",
+    minBudget: "",
+    maxBudget: "",
+};
+
 const RequestFilters = ({
     employeeNames,
     onFilterChange,
 }: RequestFiltersProps) => {
-    const [filters, setFilters] = useState<FiltersState>({
-        employeeName: "",
-        status: "",
-        minBudget: "",
-        maxBudget: "",
-    });
+    const [filters, setFilters] = useState<FiltersState>(initialFilters);
 
     // Cached budget validation
     const budgetValidation = useMemo(() => {
@@ -69,9 +72,19 @@ const RequestFilters = ({
         setFilters((prev) => ({ ...prev, [name]: value }));
     };
 
+    const handleReset = () => {
+        setFilters(initialFilters);
+        onFilterChange(initialFilters);
+    };
+
     return (
         <Box mb={2} data-testid="request-filters">
-            <Stack direction={{ xs: "column", sm: "row" }} spacing={2}>
+            <Stack
+                direction={{ xs: "row" }}
+                alignItems="flex-end"
+                flexWrap="wrap"
+                gap={2}
+            >
                 <TextField
                     select
                     label="Employee Name"
@@ -176,6 +189,14 @@ const RequestFilters = ({
                     }}
                     sx={{ minWidth: 120 }}
                 />
+                <Button
+                    variant="outlined"
+                    onClick={handleReset}
+                    sx={{ height: 40 }}
+                    data-testid="reset-filters"
+                >
+                    Reset
+                </Button>
             </Stack>
             {budgetValidation.error && (
                 <Alert

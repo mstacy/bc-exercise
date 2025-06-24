@@ -73,6 +73,14 @@ const SupervisorPage = () => {
                 aValue = a.estimatedBudget;
                 bValue = b.estimatedBudget;
             }
+            if (sortBy === "employeeName") {
+                aValue = a.employeeName.toLowerCase();
+                bValue = b.employeeName.toLowerCase();
+            }
+            if (sortBy === "description") {
+                aValue = a.description.toLowerCase();
+                bValue = b.description.toLowerCase();
+            }
             if (aValue < bValue) return sortDirection === "asc" ? -1 : 1;
             if (aValue > bValue) return sortDirection === "asc" ? 1 : -1;
             return 0;

@@ -55,10 +55,32 @@ const RequestTable = ({
                     <TableHead>
                         <TableRow>
                             <TableCell data-testid="employee-header">
-                                Employee
+                                <TableSortLabel
+                                    active={sortBy === "employeeName"}
+                                    direction={
+                                        sortBy === "employeeName"
+                                            ? sortDirection
+                                            : "asc"
+                                    }
+                                    onClick={() => onSortChange("employeeName")}
+                                    data-testid="employee-sort"
+                                >
+                                    Employee
+                                </TableSortLabel>
                             </TableCell>
                             <TableCell data-testid="description-header">
-                                Description
+                                <TableSortLabel
+                                    active={sortBy === "description"}
+                                    direction={
+                                        sortBy === "description"
+                                            ? sortDirection
+                                            : "asc"
+                                    }
+                                    onClick={() => onSortChange("description")}
+                                    data-testid="description-sort"
+                                >
+                                    Description
+                                </TableSortLabel>
                             </TableCell>
                             <TableCell>
                                 <TableSortLabel
