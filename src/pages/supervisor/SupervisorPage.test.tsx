@@ -275,6 +275,58 @@ describe("SupervisorPage", () => {
                 expect(screen.getByTestId("budget-2")).toBeInTheDocument();
             });
         });
+
+        it("should reset all filters when reset button is clicked", async () => {
+            const user = userEvent.setup();
+            (fetch as jest.Mock).mockResolvedValueOnce({
+                ok: true,
+                json: async () => mockRequests,
+            });
+
+            render(
+                <TestWrapper user={mockUser}>
+                    <SupervisorPage />
+                </TestWrapper>
+            );
+
+            await waitFor(() => {
+                expect(
+                    screen.getByTestId("request-filters")
+                ).toBeInTheDocument();
+            });
+
+            // Change employee filter
+            const employeeSelect = screen.getByTestId(
+                "employee-name-filter"
+            ).previousElementSibling;
+            if (employeeSelect) {
+                await user.click(employeeSelect);
+                await user.click(screen.getByTestId("employee-name-alice"));
+            }
+
+            // Change status filter
+            const statusSelect =
+                screen.getByTestId("status-filter").previousElementSibling;
+            if (statusSelect) {
+                await user.click(statusSelect);
+                await user.click(screen.getByTestId("status-option-draft"));
+            }
+
+            // Change min budget filter
+            const minBudgetField = screen.getByTestId("min-budget-filter");
+            await user.clear(minBudgetField);
+            await user.type(minBudgetField, "100");
+
+            // Click reset
+            const resetButton = screen.getByTestId("reset-filters");
+            await user.click(resetButton);
+
+            // All filters should be reset to default (empty string)
+            expect(screen.getByTestId("employee-name-filter")).toHaveValue("");
+            expect(screen.getByTestId("status-filter")).toHaveValue("");
+            expect(screen.getByTestId("min-budget-filter")).toHaveValue(null);
+            expect(screen.getByTestId("max-budget-filter")).toHaveValue(null);
+        });
     });
 
     describe("Sorting functionality", () => {
