@@ -506,7 +506,7 @@ describe("EmployeePage", () => {
             expect(dateField).toHaveValue("");
         });
 
-        it("should clear success message when Clear button is clicked", async () => {
+        it("should clear success message when Reset button is clicked", async () => {
             const user = userEvent.setup();
 
             (fetch as jest.Mock).mockResolvedValueOnce({
@@ -535,15 +535,15 @@ describe("EmployeePage", () => {
                 expect(screen.getByTestId("success-alert")).toBeInTheDocument();
             });
 
-            const clearButton = screen.getByTestId("clear-button");
-            await user.click(clearButton);
+            const resetButton = screen.getByTestId("reset-button");
+            await user.click(resetButton);
 
             expect(
                 screen.queryByTestId("success-alert")
             ).not.toBeInTheDocument();
         });
 
-        it("should clear error message when Clear button is clicked", async () => {
+        it("should clear error message when Reset button is clicked", async () => {
             const user = userEvent.setup();
 
             (fetch as jest.Mock).mockRejectedValueOnce(new Error("Test error"));
@@ -569,8 +569,8 @@ describe("EmployeePage", () => {
                 expect(screen.getByTestId("error-alert")).toBeInTheDocument();
             });
 
-            const clearButton = screen.getByTestId("clear-button");
-            await user.click(clearButton);
+            const resetButton = screen.getByTestId("reset-button");
+            await user.click(resetButton);
 
             expect(screen.queryByTestId("error-alert")).not.toBeInTheDocument();
         });

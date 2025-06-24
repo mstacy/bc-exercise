@@ -56,9 +56,9 @@ const LoginPage = () => {
     });
 
     const handleSuccessfulLogin = useCallback(
-        (user: User) => {
+        (user: User, replace: boolean = false) => {
             const roleConfig = ROLE_CONFIGS[user.role];
-            navigate(roleConfig.route);
+            navigate(roleConfig.route, { replace });
         },
         [navigate]
     );
@@ -66,7 +66,7 @@ const LoginPage = () => {
     // Redirect if already logged in
     useEffect(() => {
         if (user) {
-            handleSuccessfulLogin(user);
+            handleSuccessfulLogin(user, true);
         }
     }, [user, handleSuccessfulLogin]);
 

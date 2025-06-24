@@ -365,7 +365,9 @@ describe("LoginPage", () => {
                 expect(mockSetUser).toHaveBeenCalledWith(mockEmployee);
             });
             await waitFor(() => {
-                expect(mockNavigate).toHaveBeenCalledWith("/employee");
+                expect(mockNavigate).toHaveBeenCalledWith("/employee", {
+                    replace: false,
+                });
             });
         });
 
@@ -396,7 +398,9 @@ describe("LoginPage", () => {
                 expect(mockSetUser).toHaveBeenCalledWith(mockSupervisor);
             });
             await waitFor(() => {
-                expect(mockNavigate).toHaveBeenCalledWith("/supervisor");
+                expect(mockNavigate).toHaveBeenCalledWith("/supervisor", {
+                    replace: false,
+                });
             });
         });
 
