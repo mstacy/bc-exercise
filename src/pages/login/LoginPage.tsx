@@ -1,6 +1,6 @@
 import { useForm, Controller } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import {
     Box,
     Card,
@@ -22,6 +22,7 @@ import {
 } from "@mui/icons-material";
 import { IconButton, InputAdornment } from "@mui/material";
 import { useUser } from "../../auth/UserContext";
+import { ROLE_CONFIGS } from "../../auth/roles";
 
 interface LoginFormData {
     username: string;
@@ -54,16 +55,20 @@ const LoginPage = () => {
         },
     });
 
+    const handleSuccessfulLogin = useCallback(
+        (user: User) => {
+            const roleConfig = ROLE_CONFIGS[user.role];
+            navigate(roleConfig.route);
+        },
+        [navigate]
+    );
+
     // Redirect if already logged in
     useEffect(() => {
         if (user) {
-            if (user.role === "employee") {
-                navigate("/employee", { replace: true });
-            } else if (user.role === "supervisor") {
-                navigate("/supervisor", { replace: true });
-            }
+            handleSuccessfulLogin(user);
         }
-    }, [user, navigate]);
+    }, [user, handleSuccessfulLogin]);
 
     // Authentication function that makes POST request to backend
     const authenticateUser = async (
@@ -108,11 +113,7 @@ const LoginPage = () => {
 
             if (user) {
                 setUser(user);
-                if (user.role === "employee") {
-                    navigate("/employee");
-                } else {
-                    navigate("/supervisor");
-                }
+                handleSuccessfulLogin(user);
             } else {
                 setError("Invalid username or password");
                 reset();

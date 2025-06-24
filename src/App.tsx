@@ -1,11 +1,19 @@
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import HomePage from "./pages/home/HomePage";
-import EmployeePage from "./pages/employee/EmployeePage";
 import LoginPage from "./pages/login/LoginPage";
-import SupervisorPage from "./pages/supervisor/SupervisorPage";
 import { UserProvider } from "./auth/UserContext";
 import PrivateRoute from "./auth/PrivateRoute";
 import Layout from "./components/Layout";
+import { ROLE_CONFIGS } from "./auth/roles";
+
+const protectedRoutes = Object.values(ROLE_CONFIGS).map((config) => ({
+    path: config.route.substring(1),
+    element: (
+        <PrivateRoute requiredRole={config.role}>
+            <config.component />
+        </PrivateRoute>
+    ),
+}));
 
 const router = createBrowserRouter([
     {
@@ -19,24 +27,7 @@ const router = createBrowserRouter([
     {
         path: "/",
         element: <Layout />,
-        children: [
-            {
-                path: "employee",
-                element: (
-                    <PrivateRoute requiredRole="employee">
-                        <EmployeePage />
-                    </PrivateRoute>
-                ),
-            },
-            {
-                path: "supervisor",
-                element: (
-                    <PrivateRoute requiredRole="supervisor">
-                        <SupervisorPage />
-                    </PrivateRoute>
-                ),
-            },
-        ],
+        children: [...protectedRoutes],
     },
 ]);
 
