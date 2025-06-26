@@ -181,10 +181,9 @@ describe("SupervisorPage", () => {
                 expect(
                     screen.getByTestId("employee-name-1")
                 ).toBeInTheDocument();
-                expect(
-                    screen.getByTestId("employee-name-2")
-                ).toBeInTheDocument();
             });
+
+            expect(screen.getByTestId("employee-name-2")).toBeInTheDocument();
 
             const employeeSelect = screen.getByLabelText("Employee Name");
             await user.click(employeeSelect);
@@ -194,9 +193,11 @@ describe("SupervisorPage", () => {
                 expect(
                     screen.getByTestId("employee-name-1")
                 ).toBeInTheDocument();
-                expect(
-                    screen.getByTestId("employee-name-3")
-                ).toBeInTheDocument();
+            });
+
+            expect(screen.getByTestId("employee-name-3")).toBeInTheDocument();
+
+            await waitFor(() => {
                 expect(
                     screen.queryByTestId("employee-name-2")
                 ).not.toBeInTheDocument();
@@ -220,10 +221,11 @@ describe("SupervisorPage", () => {
                 expect(screen.getByTestId("status-select-1")).toHaveValue(
                     "submitted"
                 );
-                expect(screen.getByTestId("status-select-2")).toHaveValue(
-                    "approved"
-                );
             });
+
+            expect(screen.getByTestId("status-select-2")).toHaveValue(
+                "approved"
+            );
 
             const statusSelect = screen.getByLabelText("Status");
             await user.click(statusSelect);
@@ -233,6 +235,9 @@ describe("SupervisorPage", () => {
                 expect(
                     screen.getByTestId("status-select-2")
                 ).toBeInTheDocument();
+            });
+
+            await waitFor(() => {
                 expect(
                     screen.queryByTestId("status-select-1")
                 ).not.toBeInTheDocument();
@@ -256,10 +261,9 @@ describe("SupervisorPage", () => {
                 expect(screen.getByTestId("budget-1")).toHaveTextContent(
                     "$500"
                 );
-                expect(screen.getByTestId("budget-2")).toHaveTextContent(
-                    "$750"
-                );
             });
+
+            expect(screen.getByTestId("budget-2")).toHaveTextContent("$750");
 
             const minBudgetField = screen.getByTestId("min-budget-filter");
             await user.type(minBudgetField, "600");
@@ -268,8 +272,9 @@ describe("SupervisorPage", () => {
                 expect(
                     screen.queryByTestId("budget-1")
                 ).not.toBeInTheDocument();
-                expect(screen.getByTestId("budget-2")).toBeInTheDocument();
             });
+
+            expect(screen.getByTestId("budget-2")).toBeInTheDocument();
         });
 
         it("should reset all filters when reset button is clicked", async () => {
@@ -712,13 +717,14 @@ describe("SupervisorPage", () => {
                 expect(
                     screen.getByTestId("group-title-draft")
                 ).toHaveTextContent("Draft");
-                expect(
-                    screen.getByTestId("group-title-submitted")
-                ).toHaveTextContent("Submitted for Approval");
-                expect(
-                    screen.getByTestId("group-title-approved")
-                ).toHaveTextContent("Approved");
             });
+
+            expect(
+                screen.getByTestId("group-title-submitted")
+            ).toHaveTextContent("Submitted for Approval");
+            expect(
+                screen.getByTestId("group-title-approved")
+            ).toHaveTextContent("Approved");
         });
 
         it("should show empty state when filters result in no matches", async () => {
@@ -761,19 +767,20 @@ describe("SupervisorPage", () => {
                 expect(screen.getByTestId("employee-header")).toHaveTextContent(
                     "Employee"
                 );
-                expect(
-                    screen.getByTestId("description-header")
-                ).toHaveTextContent("Description");
-                expect(screen.getByTestId("budget-sort")).toHaveTextContent(
-                    "Budget"
-                );
-                expect(screen.getByTestId("date-sort")).toHaveTextContent(
-                    "Expected Date"
-                );
-                expect(
-                    screen.getByTestId("update-status-header")
-                ).toHaveTextContent("Status");
             });
+
+            expect(screen.getByTestId("description-header")).toHaveTextContent(
+                "Description"
+            );
+            expect(screen.getByTestId("budget-sort")).toHaveTextContent(
+                "Budget"
+            );
+            expect(screen.getByTestId("date-sort")).toHaveTextContent(
+                "Expected Date"
+            );
+            expect(
+                screen.getByTestId("update-status-header")
+            ).toHaveTextContent("Status");
         });
     });
 
@@ -794,10 +801,9 @@ describe("SupervisorPage", () => {
                 expect(screen.getByTestId("budget-1")).toHaveTextContent(
                     "$500"
                 );
-                expect(screen.getByTestId("budget-2")).toHaveTextContent(
-                    "$750"
-                );
             });
+
+            expect(screen.getByTestId("budget-2")).toHaveTextContent("$750");
         });
 
         it("should format dates correctly", async () => {
@@ -816,10 +822,11 @@ describe("SupervisorPage", () => {
                 expect(screen.getByTestId("date-1")).toHaveTextContent(
                     "2024-01-15"
                 );
-                expect(screen.getByTestId("date-2")).toHaveTextContent(
-                    "2024-01-20"
-                );
             });
+
+            expect(screen.getByTestId("date-2")).toHaveTextContent(
+                "2024-01-20"
+            );
         });
     });
 
@@ -838,8 +845,9 @@ describe("SupervisorPage", () => {
 
             await waitFor(() => {
                 expect(screen.getByTestId("table")).toBeInTheDocument();
-                expect(screen.getAllByRole("row").length).toBeGreaterThan(0);
             });
+
+            expect(screen.getAllByRole("row").length).toBeGreaterThan(0);
         });
 
         it("should have proper form labels", async () => {
@@ -858,10 +866,11 @@ describe("SupervisorPage", () => {
                 expect(
                     screen.getByLabelText("Employee Name")
                 ).toBeInTheDocument();
-                expect(screen.getByLabelText("Status")).toBeInTheDocument();
-                expect(screen.getByLabelText("Min Budget")).toBeInTheDocument();
-                expect(screen.getByLabelText("Max Budget")).toBeInTheDocument();
             });
+
+            expect(screen.getByLabelText("Status")).toBeInTheDocument();
+            expect(screen.getByLabelText("Min Budget")).toBeInTheDocument();
+            expect(screen.getByLabelText("Max Budget")).toBeInTheDocument();
         });
     });
 });
