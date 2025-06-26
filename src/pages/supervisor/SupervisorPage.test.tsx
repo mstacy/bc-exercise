@@ -103,19 +103,19 @@ describe("SupervisorPage", () => {
 
             await waitFor(() => {
                 expect(screen.getByTestId("request-table")).toBeInTheDocument();
-                expect(screen.getByTestId("employee-name-1")).toHaveTextContent(
-                    "alice"
-                );
-                expect(screen.getByTestId("employee-name-2")).toHaveTextContent(
-                    "bob"
-                );
-                expect(screen.getByTestId("description-1")).toHaveTextContent(
-                    "AWS Certification"
-                );
-                expect(screen.getByTestId("description-2")).toHaveTextContent(
-                    "Azure Certification"
-                );
             });
+            expect(screen.getByTestId("employee-name-1")).toHaveTextContent(
+                "alice"
+            );
+            expect(screen.getByTestId("employee-name-2")).toHaveTextContent(
+                "bob"
+            );
+            expect(screen.getByTestId("description-1")).toHaveTextContent(
+                "AWS Certification"
+            );
+            expect(screen.getByTestId("description-2")).toHaveTextContent(
+                "Azure Certification"
+            );
         });
 
         it("should show error when fetch fails", async () => {
@@ -131,10 +131,10 @@ describe("SupervisorPage", () => {
 
             await waitFor(() => {
                 expect(screen.getByTestId("error-alert")).toBeInTheDocument();
-                expect(
-                    screen.getByText("Failed to fetch requests.")
-                ).toBeInTheDocument();
             });
+            expect(
+                screen.getByText("Failed to fetch requests.")
+            ).toBeInTheDocument();
         });
 
         it("should display filter controls", async () => {
@@ -153,17 +153,13 @@ describe("SupervisorPage", () => {
                 expect(
                     screen.getByTestId("request-filters")
                 ).toBeInTheDocument();
-                expect(
-                    screen.getByTestId("employee-name-filter")
-                ).toBeInTheDocument();
-                expect(screen.getByTestId("status-filter")).toBeInTheDocument();
-                expect(
-                    screen.getByTestId("min-budget-filter")
-                ).toBeInTheDocument();
-                expect(
-                    screen.getByTestId("max-budget-filter")
-                ).toBeInTheDocument();
             });
+            expect(
+                screen.getByTestId("employee-name-filter")
+            ).toBeInTheDocument();
+            expect(screen.getByTestId("status-filter")).toBeInTheDocument();
+            expect(screen.getByTestId("min-budget-filter")).toBeInTheDocument();
+            expect(screen.getByTestId("max-budget-filter")).toBeInTheDocument();
         });
     });
 
@@ -378,7 +374,7 @@ describe("SupervisorPage", () => {
     });
 
     describe("Status updates", () => {
-        it("should update request status successfully", async () => {
+        it("should update request status successfully and show success snackbar", async () => {
             const user = userEvent.setup();
             (fetch as jest.Mock)
                 .mockResolvedValueOnce({
@@ -421,9 +417,16 @@ describe("SupervisorPage", () => {
                     }
                 );
             });
+
+            // Check for success snackbar
+            await waitFor(() => {
+                expect(
+                    screen.getByText("Status updated successfully to approved")
+                ).toBeInTheDocument();
+            });
         });
 
-        it("should handle status update failure", async () => {
+        it("should handle status update failure and show error snackbar", async () => {
             const user = userEvent.setup();
             (fetch as jest.Mock)
                 .mockResolvedValueOnce({
@@ -453,11 +456,241 @@ describe("SupervisorPage", () => {
                 );
             }
 
+            // Check for error snackbar
             await waitFor(() => {
-                expect(screen.getByTestId("error-alert")).toBeInTheDocument();
                 expect(
-                    screen.getByText("Failed to update status.")
+                    screen.getByText(
+                        "Failed to update status. Please try again."
+                    )
                 ).toBeInTheDocument();
+            });
+        });
+    });
+
+    describe("Snackbar notifications", () => {
+        it("should show success snackbar when status is updated to approved", async () => {
+            const user = userEvent.setup();
+            (fetch as jest.Mock)
+                .mockResolvedValueOnce({
+                    ok: true,
+                    json: async () => mockRequests,
+                })
+                .mockResolvedValueOnce({
+                    ok: true,
+                    json: async () => ({ success: true }),
+                });
+
+            render(
+                <TestWrapper user={mockUser}>
+                    <SupervisorPage />
+                </TestWrapper>
+            );
+
+            await waitFor(() => {
+                expect(
+                    screen.getByTestId("status-select-1")
+                ).toBeInTheDocument();
+            });
+
+            const statusSelect =
+                screen.getByTestId("status-select-1").previousElementSibling;
+            if (statusSelect) {
+                await user.click(statusSelect);
+                await user.click(
+                    screen.getByTestId("status-option-1-approved")
+                );
+            }
+
+            await waitFor(() => {
+                expect(
+                    screen.getByText("Status updated successfully to approved")
+                ).toBeInTheDocument();
+            });
+        });
+
+        it("should show success snackbar when status is updated to rejected", async () => {
+            const user = userEvent.setup();
+            (fetch as jest.Mock)
+                .mockResolvedValueOnce({
+                    ok: true,
+                    json: async () => mockRequests,
+                })
+                .mockResolvedValueOnce({
+                    ok: true,
+                    json: async () => ({ success: true }),
+                });
+
+            render(
+                <TestWrapper user={mockUser}>
+                    <SupervisorPage />
+                </TestWrapper>
+            );
+
+            await waitFor(() => {
+                expect(
+                    screen.getByTestId("status-select-1")
+                ).toBeInTheDocument();
+            });
+
+            const statusSelect =
+                screen.getByTestId("status-select-1").previousElementSibling;
+            if (statusSelect) {
+                await user.click(statusSelect);
+                await user.click(
+                    screen.getByTestId("status-option-1-rejected")
+                );
+            }
+
+            await waitFor(() => {
+                expect(
+                    screen.getByText("Status updated successfully to rejected")
+                ).toBeInTheDocument();
+            });
+        });
+
+        it("should show error snackbar when network request fails", async () => {
+            const user = userEvent.setup();
+            (fetch as jest.Mock)
+                .mockResolvedValueOnce({
+                    ok: true,
+                    json: async () => mockRequests,
+                })
+                .mockRejectedValueOnce(new Error("Network error"));
+
+            render(
+                <TestWrapper user={mockUser}>
+                    <SupervisorPage />
+                </TestWrapper>
+            );
+
+            await waitFor(() => {
+                expect(
+                    screen.getByTestId("status-select-1")
+                ).toBeInTheDocument();
+            });
+
+            const statusSelect =
+                screen.getByTestId("status-select-1").previousElementSibling;
+            if (statusSelect) {
+                await user.click(statusSelect);
+                await user.click(
+                    screen.getByTestId("status-option-1-approved")
+                );
+            }
+
+            await waitFor(() => {
+                expect(
+                    screen.getByText(
+                        "Failed to update status. Please try again."
+                    )
+                ).toBeInTheDocument();
+            });
+        });
+
+        it("should auto-hide snackbar after 6 seconds", async () => {
+            jest.useFakeTimers();
+            const user = userEvent.setup({ delay: null });
+
+            (fetch as jest.Mock)
+                .mockResolvedValueOnce({
+                    ok: true,
+                    json: async () => mockRequests,
+                })
+                .mockResolvedValueOnce({
+                    ok: true,
+                    json: async () => ({ success: true }),
+                });
+
+            render(
+                <TestWrapper user={mockUser}>
+                    <SupervisorPage />
+                </TestWrapper>
+            );
+
+            await waitFor(() => {
+                expect(
+                    screen.getByTestId("status-select-1")
+                ).toBeInTheDocument();
+            });
+
+            const statusSelect =
+                screen.getByTestId("status-select-1").previousElementSibling;
+            if (statusSelect) {
+                await user.click(statusSelect);
+                await user.click(
+                    screen.getByTestId("status-option-1-approved")
+                );
+            }
+
+            await waitFor(() => {
+                expect(
+                    screen.getByText("Status updated successfully to approved")
+                ).toBeInTheDocument();
+            });
+
+            // Fast-forward time by 6 seconds
+            jest.advanceTimersByTime(6000);
+
+            await waitFor(() => {
+                expect(
+                    screen.queryByText(
+                        "Status updated successfully to approved"
+                    )
+                ).not.toBeInTheDocument();
+            });
+
+            jest.useRealTimers();
+        });
+
+        it("should allow manual closing of snackbar", async () => {
+            const user = userEvent.setup();
+            (fetch as jest.Mock)
+                .mockResolvedValueOnce({
+                    ok: true,
+                    json: async () => mockRequests,
+                })
+                .mockResolvedValueOnce({
+                    ok: true,
+                    json: async () => ({ success: true }),
+                });
+
+            render(
+                <TestWrapper user={mockUser}>
+                    <SupervisorPage />
+                </TestWrapper>
+            );
+
+            await waitFor(() => {
+                expect(
+                    screen.getByTestId("status-select-1")
+                ).toBeInTheDocument();
+            });
+
+            const statusSelect =
+                screen.getByTestId("status-select-1").previousElementSibling;
+            if (statusSelect) {
+                await user.click(statusSelect);
+                await user.click(
+                    screen.getByTestId("status-option-1-approved")
+                );
+            }
+
+            await waitFor(() => {
+                expect(
+                    screen.getByText("Status updated successfully to approved")
+                ).toBeInTheDocument();
+            });
+
+            // Find and click the close button on the Alert component
+            const closeButton = screen.getByRole("button", { name: /close/i });
+            await user.click(closeButton);
+
+            await waitFor(() => {
+                expect(
+                    screen.queryByText(
+                        "Status updated successfully to approved"
+                    )
+                ).not.toBeInTheDocument();
             });
         });
     });
