@@ -1,5 +1,11 @@
 import { useEffect, useState, useMemo } from "react";
-import { Box, CircularProgress, Alert, Typography } from "@mui/material";
+import {
+    Box,
+    CircularProgress,
+    Alert,
+    Typography,
+    Snackbar,
+} from "@mui/material";
 import RequestFilters, { FiltersState } from "./RequestFilters";
 import RequestTable, { StatusType } from "./RequestTable";
 
@@ -25,6 +31,15 @@ const SupervisorPage = () => {
     });
     const [sortBy, setSortBy] = useState<string>("expectedDate");
     const [sortDirection, setSortDirection] = useState<"asc" | "desc">("asc");
+    const [snackbar, setSnackbar] = useState<{
+        open: boolean;
+        message: string;
+        severity: "success" | "error";
+    }>({
+        open: false,
+        message: "",
+        severity: "success",
+    });
 
     useEffect(() => {
         setLoading(true);
@@ -119,8 +134,17 @@ const SupervisorPage = () => {
                 body: JSON.stringify({ status: newStatus }),
             });
             setRequests((prev) => prev.map((r) => (r.id === id ? updated : r)));
+            setSnackbar({
+                open: true,
+                message: `Status updated successfully to ${newStatus}`,
+                severity: "success",
+            });
         } catch {
-            setError("Failed to update status.");
+            setSnackbar({
+                open: true,
+                message: "Failed to update status. Please try again.",
+                severity: "error",
+            });
         }
     };
 
@@ -165,6 +189,18 @@ const SupervisorPage = () => {
                     }}
                 />
             )}
+            <Snackbar
+                open={snackbar.open}
+                autoHideDuration={6000}
+                onClose={() => setSnackbar({ ...snackbar, open: false })}
+            >
+                <Alert
+                    onClose={() => setSnackbar({ ...snackbar, open: false })}
+                    severity={snackbar.severity}
+                >
+                    {snackbar.message}
+                </Alert>
+            </Snackbar>
         </Box>
     );
 };
