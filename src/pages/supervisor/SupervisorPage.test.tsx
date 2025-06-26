@@ -103,19 +103,19 @@ describe("SupervisorPage", () => {
 
             await waitFor(() => {
                 expect(screen.getByTestId("request-table")).toBeInTheDocument();
-                expect(screen.getByTestId("employee-name-1")).toHaveTextContent(
-                    "alice"
-                );
-                expect(screen.getByTestId("employee-name-2")).toHaveTextContent(
-                    "bob"
-                );
-                expect(screen.getByTestId("description-1")).toHaveTextContent(
-                    "AWS Certification"
-                );
-                expect(screen.getByTestId("description-2")).toHaveTextContent(
-                    "Azure Certification"
-                );
             });
+            expect(screen.getByTestId("employee-name-1")).toHaveTextContent(
+                "alice"
+            );
+            expect(screen.getByTestId("employee-name-2")).toHaveTextContent(
+                "bob"
+            );
+            expect(screen.getByTestId("description-1")).toHaveTextContent(
+                "AWS Certification"
+            );
+            expect(screen.getByTestId("description-2")).toHaveTextContent(
+                "Azure Certification"
+            );
         });
 
         it("should show error when fetch fails", async () => {
@@ -131,10 +131,10 @@ describe("SupervisorPage", () => {
 
             await waitFor(() => {
                 expect(screen.getByTestId("error-alert")).toBeInTheDocument();
-                expect(
-                    screen.getByText("Failed to fetch requests.")
-                ).toBeInTheDocument();
             });
+            expect(
+                screen.getByText("Failed to fetch requests.")
+            ).toBeInTheDocument();
         });
 
         it("should display filter controls", async () => {
@@ -153,17 +153,13 @@ describe("SupervisorPage", () => {
                 expect(
                     screen.getByTestId("request-filters")
                 ).toBeInTheDocument();
-                expect(
-                    screen.getByTestId("employee-name-filter")
-                ).toBeInTheDocument();
-                expect(screen.getByTestId("status-filter")).toBeInTheDocument();
-                expect(
-                    screen.getByTestId("min-budget-filter")
-                ).toBeInTheDocument();
-                expect(
-                    screen.getByTestId("max-budget-filter")
-                ).toBeInTheDocument();
             });
+            expect(
+                screen.getByTestId("employee-name-filter")
+            ).toBeInTheDocument();
+            expect(screen.getByTestId("status-filter")).toBeInTheDocument();
+            expect(screen.getByTestId("min-budget-filter")).toBeInTheDocument();
+            expect(screen.getByTestId("max-budget-filter")).toBeInTheDocument();
         });
     });
 
@@ -185,10 +181,9 @@ describe("SupervisorPage", () => {
                 expect(
                     screen.getByTestId("employee-name-1")
                 ).toBeInTheDocument();
-                expect(
-                    screen.getByTestId("employee-name-2")
-                ).toBeInTheDocument();
             });
+
+            expect(screen.getByTestId("employee-name-2")).toBeInTheDocument();
 
             const employeeSelect = screen.getByLabelText("Employee Name");
             await user.click(employeeSelect);
@@ -198,9 +193,11 @@ describe("SupervisorPage", () => {
                 expect(
                     screen.getByTestId("employee-name-1")
                 ).toBeInTheDocument();
-                expect(
-                    screen.getByTestId("employee-name-3")
-                ).toBeInTheDocument();
+            });
+
+            expect(screen.getByTestId("employee-name-3")).toBeInTheDocument();
+
+            await waitFor(() => {
                 expect(
                     screen.queryByTestId("employee-name-2")
                 ).not.toBeInTheDocument();
@@ -224,10 +221,11 @@ describe("SupervisorPage", () => {
                 expect(screen.getByTestId("status-select-1")).toHaveValue(
                     "submitted"
                 );
-                expect(screen.getByTestId("status-select-2")).toHaveValue(
-                    "approved"
-                );
             });
+
+            expect(screen.getByTestId("status-select-2")).toHaveValue(
+                "approved"
+            );
 
             const statusSelect = screen.getByLabelText("Status");
             await user.click(statusSelect);
@@ -237,6 +235,9 @@ describe("SupervisorPage", () => {
                 expect(
                     screen.getByTestId("status-select-2")
                 ).toBeInTheDocument();
+            });
+
+            await waitFor(() => {
                 expect(
                     screen.queryByTestId("status-select-1")
                 ).not.toBeInTheDocument();
@@ -260,10 +261,9 @@ describe("SupervisorPage", () => {
                 expect(screen.getByTestId("budget-1")).toHaveTextContent(
                     "$500"
                 );
-                expect(screen.getByTestId("budget-2")).toHaveTextContent(
-                    "$750"
-                );
             });
+
+            expect(screen.getByTestId("budget-2")).toHaveTextContent("$750");
 
             const minBudgetField = screen.getByTestId("min-budget-filter");
             await user.type(minBudgetField, "600");
@@ -272,8 +272,9 @@ describe("SupervisorPage", () => {
                 expect(
                     screen.queryByTestId("budget-1")
                 ).not.toBeInTheDocument();
-                expect(screen.getByTestId("budget-2")).toBeInTheDocument();
             });
+
+            expect(screen.getByTestId("budget-2")).toBeInTheDocument();
         });
 
         it("should reset all filters when reset button is clicked", async () => {
@@ -378,7 +379,7 @@ describe("SupervisorPage", () => {
     });
 
     describe("Status updates", () => {
-        it("should update request status successfully", async () => {
+        it("should update request status successfully and show success snackbar", async () => {
             const user = userEvent.setup();
             (fetch as jest.Mock)
                 .mockResolvedValueOnce({
@@ -421,9 +422,16 @@ describe("SupervisorPage", () => {
                     }
                 );
             });
+
+            // Check for success snackbar
+            await waitFor(() => {
+                expect(
+                    screen.getByText("Status updated successfully to approved")
+                ).toBeInTheDocument();
+            });
         });
 
-        it("should handle status update failure", async () => {
+        it("should handle status update failure and show error snackbar", async () => {
             const user = userEvent.setup();
             (fetch as jest.Mock)
                 .mockResolvedValueOnce({
@@ -453,11 +461,241 @@ describe("SupervisorPage", () => {
                 );
             }
 
+            // Check for error snackbar
             await waitFor(() => {
-                expect(screen.getByTestId("error-alert")).toBeInTheDocument();
                 expect(
-                    screen.getByText("Failed to update status.")
+                    screen.getByText(
+                        "Failed to update status. Please try again."
+                    )
                 ).toBeInTheDocument();
+            });
+        });
+    });
+
+    describe("Snackbar notifications", () => {
+        it("should show success snackbar when status is updated to approved", async () => {
+            const user = userEvent.setup();
+            (fetch as jest.Mock)
+                .mockResolvedValueOnce({
+                    ok: true,
+                    json: async () => mockRequests,
+                })
+                .mockResolvedValueOnce({
+                    ok: true,
+                    json: async () => ({ success: true }),
+                });
+
+            render(
+                <TestWrapper user={mockUser}>
+                    <SupervisorPage />
+                </TestWrapper>
+            );
+
+            await waitFor(() => {
+                expect(
+                    screen.getByTestId("status-select-1")
+                ).toBeInTheDocument();
+            });
+
+            const statusSelect =
+                screen.getByTestId("status-select-1").previousElementSibling;
+            if (statusSelect) {
+                await user.click(statusSelect);
+                await user.click(
+                    screen.getByTestId("status-option-1-approved")
+                );
+            }
+
+            await waitFor(() => {
+                expect(
+                    screen.getByText("Status updated successfully to approved")
+                ).toBeInTheDocument();
+            });
+        });
+
+        it("should show success snackbar when status is updated to rejected", async () => {
+            const user = userEvent.setup();
+            (fetch as jest.Mock)
+                .mockResolvedValueOnce({
+                    ok: true,
+                    json: async () => mockRequests,
+                })
+                .mockResolvedValueOnce({
+                    ok: true,
+                    json: async () => ({ success: true }),
+                });
+
+            render(
+                <TestWrapper user={mockUser}>
+                    <SupervisorPage />
+                </TestWrapper>
+            );
+
+            await waitFor(() => {
+                expect(
+                    screen.getByTestId("status-select-1")
+                ).toBeInTheDocument();
+            });
+
+            const statusSelect =
+                screen.getByTestId("status-select-1").previousElementSibling;
+            if (statusSelect) {
+                await user.click(statusSelect);
+                await user.click(
+                    screen.getByTestId("status-option-1-rejected")
+                );
+            }
+
+            await waitFor(() => {
+                expect(
+                    screen.getByText("Status updated successfully to rejected")
+                ).toBeInTheDocument();
+            });
+        });
+
+        it("should show error snackbar when network request fails", async () => {
+            const user = userEvent.setup();
+            (fetch as jest.Mock)
+                .mockResolvedValueOnce({
+                    ok: true,
+                    json: async () => mockRequests,
+                })
+                .mockRejectedValueOnce(new Error("Network error"));
+
+            render(
+                <TestWrapper user={mockUser}>
+                    <SupervisorPage />
+                </TestWrapper>
+            );
+
+            await waitFor(() => {
+                expect(
+                    screen.getByTestId("status-select-1")
+                ).toBeInTheDocument();
+            });
+
+            const statusSelect =
+                screen.getByTestId("status-select-1").previousElementSibling;
+            if (statusSelect) {
+                await user.click(statusSelect);
+                await user.click(
+                    screen.getByTestId("status-option-1-approved")
+                );
+            }
+
+            await waitFor(() => {
+                expect(
+                    screen.getByText(
+                        "Failed to update status. Please try again."
+                    )
+                ).toBeInTheDocument();
+            });
+        });
+
+        it("should auto-hide snackbar after 6 seconds", async () => {
+            jest.useFakeTimers();
+            const user = userEvent.setup({ delay: null });
+
+            (fetch as jest.Mock)
+                .mockResolvedValueOnce({
+                    ok: true,
+                    json: async () => mockRequests,
+                })
+                .mockResolvedValueOnce({
+                    ok: true,
+                    json: async () => ({ success: true }),
+                });
+
+            render(
+                <TestWrapper user={mockUser}>
+                    <SupervisorPage />
+                </TestWrapper>
+            );
+
+            await waitFor(() => {
+                expect(
+                    screen.getByTestId("status-select-1")
+                ).toBeInTheDocument();
+            });
+
+            const statusSelect =
+                screen.getByTestId("status-select-1").previousElementSibling;
+            if (statusSelect) {
+                await user.click(statusSelect);
+                await user.click(
+                    screen.getByTestId("status-option-1-approved")
+                );
+            }
+
+            await waitFor(() => {
+                expect(
+                    screen.getByText("Status updated successfully to approved")
+                ).toBeInTheDocument();
+            });
+
+            // Fast-forward time by 6 seconds
+            jest.advanceTimersByTime(6000);
+
+            await waitFor(() => {
+                expect(
+                    screen.queryByText(
+                        "Status updated successfully to approved"
+                    )
+                ).not.toBeInTheDocument();
+            });
+
+            jest.useRealTimers();
+        });
+
+        it("should allow manual closing of snackbar", async () => {
+            const user = userEvent.setup();
+            (fetch as jest.Mock)
+                .mockResolvedValueOnce({
+                    ok: true,
+                    json: async () => mockRequests,
+                })
+                .mockResolvedValueOnce({
+                    ok: true,
+                    json: async () => ({ success: true }),
+                });
+
+            render(
+                <TestWrapper user={mockUser}>
+                    <SupervisorPage />
+                </TestWrapper>
+            );
+
+            await waitFor(() => {
+                expect(
+                    screen.getByTestId("status-select-1")
+                ).toBeInTheDocument();
+            });
+
+            const statusSelect =
+                screen.getByTestId("status-select-1").previousElementSibling;
+            if (statusSelect) {
+                await user.click(statusSelect);
+                await user.click(
+                    screen.getByTestId("status-option-1-approved")
+                );
+            }
+
+            await waitFor(() => {
+                expect(
+                    screen.getByText("Status updated successfully to approved")
+                ).toBeInTheDocument();
+            });
+
+            // Find and click the close button on the Alert component
+            const closeButton = screen.getByRole("button", { name: /close/i });
+            await user.click(closeButton);
+
+            await waitFor(() => {
+                expect(
+                    screen.queryByText(
+                        "Status updated successfully to approved"
+                    )
+                ).not.toBeInTheDocument();
             });
         });
     });
@@ -479,13 +717,14 @@ describe("SupervisorPage", () => {
                 expect(
                     screen.getByTestId("group-title-draft")
                 ).toHaveTextContent("Draft");
-                expect(
-                    screen.getByTestId("group-title-submitted")
-                ).toHaveTextContent("Submitted for Approval");
-                expect(
-                    screen.getByTestId("group-title-approved")
-                ).toHaveTextContent("Approved");
             });
+
+            expect(
+                screen.getByTestId("group-title-submitted")
+            ).toHaveTextContent("Submitted for Approval");
+            expect(
+                screen.getByTestId("group-title-approved")
+            ).toHaveTextContent("Approved");
         });
 
         it("should show empty state when filters result in no matches", async () => {
@@ -528,19 +767,20 @@ describe("SupervisorPage", () => {
                 expect(screen.getByTestId("employee-header")).toHaveTextContent(
                     "Employee"
                 );
-                expect(
-                    screen.getByTestId("description-header")
-                ).toHaveTextContent("Description");
-                expect(screen.getByTestId("budget-sort")).toHaveTextContent(
-                    "Budget"
-                );
-                expect(screen.getByTestId("date-sort")).toHaveTextContent(
-                    "Expected Date"
-                );
-                expect(
-                    screen.getByTestId("update-status-header")
-                ).toHaveTextContent("Status");
             });
+
+            expect(screen.getByTestId("description-header")).toHaveTextContent(
+                "Description"
+            );
+            expect(screen.getByTestId("budget-sort")).toHaveTextContent(
+                "Budget"
+            );
+            expect(screen.getByTestId("date-sort")).toHaveTextContent(
+                "Expected Date"
+            );
+            expect(
+                screen.getByTestId("update-status-header")
+            ).toHaveTextContent("Status");
         });
     });
 
@@ -561,10 +801,9 @@ describe("SupervisorPage", () => {
                 expect(screen.getByTestId("budget-1")).toHaveTextContent(
                     "$500"
                 );
-                expect(screen.getByTestId("budget-2")).toHaveTextContent(
-                    "$750"
-                );
             });
+
+            expect(screen.getByTestId("budget-2")).toHaveTextContent("$750");
         });
 
         it("should format dates correctly", async () => {
@@ -583,10 +822,11 @@ describe("SupervisorPage", () => {
                 expect(screen.getByTestId("date-1")).toHaveTextContent(
                     "2024-01-15"
                 );
-                expect(screen.getByTestId("date-2")).toHaveTextContent(
-                    "2024-01-20"
-                );
             });
+
+            expect(screen.getByTestId("date-2")).toHaveTextContent(
+                "2024-01-20"
+            );
         });
     });
 
@@ -605,8 +845,9 @@ describe("SupervisorPage", () => {
 
             await waitFor(() => {
                 expect(screen.getByTestId("table")).toBeInTheDocument();
-                expect(screen.getAllByRole("row").length).toBeGreaterThan(0);
             });
+
+            expect(screen.getAllByRole("row").length).toBeGreaterThan(0);
         });
 
         it("should have proper form labels", async () => {
@@ -625,10 +866,11 @@ describe("SupervisorPage", () => {
                 expect(
                     screen.getByLabelText("Employee Name")
                 ).toBeInTheDocument();
-                expect(screen.getByLabelText("Status")).toBeInTheDocument();
-                expect(screen.getByLabelText("Min Budget")).toBeInTheDocument();
-                expect(screen.getByLabelText("Max Budget")).toBeInTheDocument();
             });
+
+            expect(screen.getByLabelText("Status")).toBeInTheDocument();
+            expect(screen.getByLabelText("Min Budget")).toBeInTheDocument();
+            expect(screen.getByLabelText("Max Budget")).toBeInTheDocument();
         });
     });
 });
