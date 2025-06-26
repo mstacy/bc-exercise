@@ -1,5 +1,5 @@
 import React from "react";
-import { render, screen, waitFor } from "@testing-library/react";
+import { render, screen, waitFor, fireEvent } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { ThemeProvider, createTheme } from "@mui/material/styles";
 import { LocalizationProvider } from "@mui/x-date-pickers";
@@ -272,6 +272,57 @@ describe("EmployeePage", () => {
             expect(
                 screen.queryByText("Budget must be a positive number")
             ).not.toBeInTheDocument();
+        });
+
+        it("should show character count for description field", () => {
+            render(
+                <TestWrapper user={mockUser}>
+                    <EmployeePage />
+                </TestWrapper>
+            );
+
+            expect(screen.getByText("0 / 360")).toBeInTheDocument();
+        });
+
+        it("should update character count when typing in description field", async () => {
+            const user = userEvent.setup();
+            render(
+                <TestWrapper user={mockUser}>
+                    <EmployeePage />
+                </TestWrapper>
+            );
+
+            const descriptionField = screen.getByTestId("description-field");
+
+            await user.type(descriptionField, "Test");
+
+            expect(screen.getByText("4 / 360")).toBeInTheDocument();
+        });
+
+        it("should show error for description exceeding 360 characters", async () => {
+            const user = userEvent.setup();
+            render(
+                <TestWrapper user={mockUser}>
+                    <EmployeePage />
+                </TestWrapper>
+            );
+
+            const descriptionField = screen.getByTestId("description-field");
+
+            // Create a description with 361 characters and set it directly
+            const longDescription = "a".repeat(361);
+            fireEvent.change(descriptionField, {
+                target: { value: longDescription },
+            });
+
+            const submitButton = screen.getByTestId("submit-button");
+            await user.click(submitButton);
+
+            await waitFor(() => {
+                expect(
+                    screen.getByText("Description cannot exceed 360 characters")
+                ).toBeInTheDocument();
+            });
         });
     });
 

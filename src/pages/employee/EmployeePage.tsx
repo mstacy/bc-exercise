@@ -176,6 +176,7 @@ const EmployeePage = () => {
                                             sx={{
                                                 marginTop: `0 !important`,
                                             }}
+                                            data-testid="description-char-count"
                                         >
                                             {`${
                                                 (descriptionValue || "").length
